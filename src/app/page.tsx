@@ -1,16 +1,31 @@
+'use client';
+
+import { useAuth } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { MainSidebar } from '@/components/dashboard/main-sidebar';
 import { Header } from '@/components/dashboard/header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import StatsCard from '@/components/dashboard/stats-card';
-import { DollarSign, Wallet, PiggyBank, ArrowUp, ArrowDown } from 'lucide-react';
+import { DollarSign, Wallet, PiggyBank } from 'lucide-react';
 import SpendingChart from '@/components/dashboard/spending-chart';
 import RecentTransactions from '@/components/dashboard/recent-transactions';
 import BudgetAlerts from '@/components/dashboard/budget-alerts';
-import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
-import { AddTransactionDialog } from '@/components/dashboard/add-transaction-dialog';
 
 export default function DashboardPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) {
+    return <div className="flex h-screen items-center justify-center">Cargando...</div>;
+  }
+
   return (
     <>
       <MainSidebar />

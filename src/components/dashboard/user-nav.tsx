@@ -12,9 +12,26 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
 
 export function UserNav() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar');
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  if (!user) {
+    return (
+      <Button asChild>
+        <Link href="/login">Iniciar Sesión</Link>
+      </Button>
+    );
+  }
 
   return (
     <DropdownMenu>
@@ -28,16 +45,16 @@ export function UserNav() {
                 data-ai-hint={userAvatar.imageHint}
               />
             )}
-            <AvatarFallback>MC</AvatarFallback>
+            <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Usuario</p>
+            <p className="text-sm font-medium leading-none">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              usuario@micontrol.com
+              {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -56,7 +73,7 @@ export function UserNav() {
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Cerrar sesión</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>Cerrar sesión</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
