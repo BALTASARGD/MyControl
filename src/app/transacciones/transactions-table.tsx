@@ -88,9 +88,9 @@ const columns: ColumnDef<Transaction>[] = [
     header: 'Monto',
     cell: ({ row }) => {
       const isIncome = row.original.type === 'income';
-      const formattedAmount = new Intl.NumberFormat('es-MX', {
+      const formattedAmount = new Intl.NumberFormat('es-ES', {
         style: 'currency',
-        currency: 'MXN',
+        currency: 'EUR',
       }).format(row.original.amount);
       return (
         <span className={isIncome ? 'text-green-600' : 'text-red-600'}>

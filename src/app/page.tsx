@@ -17,12 +17,6 @@ export default function DashboardPage() {
       <SidebarInset>
         <Header
           title="Dashboard"
-          actions={
-            <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Exportar
-            </Button>
-          }
         />
         <main className="p-4 sm:px-6 sm:py-0">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

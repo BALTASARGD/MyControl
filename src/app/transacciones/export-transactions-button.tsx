@@ -27,9 +27,9 @@ export function ExportTransactionsButton({ data }: { data: Transaction[] }) {
         transaction.category,
         transaction.description,
         transaction.type === 'income' ? 'Ingreso' : 'Gasto',
-        new Intl.NumberFormat('es-MX', {
+        new Intl.NumberFormat('es-ES', {
           style: 'currency',
-          currency: 'MXN',
+          currency: 'EUR',
         }).format(transaction.amount),
       ];
       tableRows.push(transactionData);

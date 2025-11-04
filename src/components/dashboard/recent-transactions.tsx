@@ -100,7 +100,10 @@ export default function RecentTransactions() {
                 </p>
               </div>
               <div className="ml-auto font-medium text-right">
-                - {transaction.amount.toFixed(2)}€
+                - {new Intl.NumberFormat('es-ES', {
+                    style: 'currency',
+                    currency: 'EUR',
+                  }).format(transaction.amount)}
                 <p className="text-xs text-muted-foreground font-normal">
                   {new Date(transaction.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
                 </p>

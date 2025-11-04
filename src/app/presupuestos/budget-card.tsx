@@ -11,13 +11,13 @@ import { cn } from '@/lib/utils';
 
 export function BudgetCard({ budget }: { budget: Budget }) {
   const percentage = (budget.spent / budget.limit) * 100;
-  const formattedSpent = new Intl.NumberFormat('es-MX', {
+  const formattedSpent = new Intl.NumberFormat('es-ES', {
     style: 'currency',
-    currency: 'MXN',
+    currency: 'EUR',
   }).format(budget.spent);
-  const formattedLimit = new Intl.NumberFormat('es-MX', {
+  const formattedLimit = new Intl.NumberFormat('es-ES', {
     style: 'currency',
-    currency: 'MXN',
+    currency: 'EUR',
   }).format(budget.limit);
 
   return (
@@ -37,13 +37,13 @@ export function BudgetCard({ budget }: { budget: Budget }) {
           )}
         >
           {percentage > 100
-            ? `Te has pasado por ${new Intl.NumberFormat('es-MX', {
+            ? `Te has pasado por ${new Intl.NumberFormat('es-ES', {
                 style: 'currency',
-                currency: 'MXN',
+                currency: 'EUR',
               }).format(budget.spent - budget.limit)}`
-            : `${new Intl.NumberFormat('es-MX', {
+            : `${new Intl.NumberFormat('es-ES', {
                 style: 'currency',
-                currency: 'MXN',
+                currency: 'EUR',
               }).format(budget.limit - budget.spent)} restantes`}
         </p>
       </CardContent>
