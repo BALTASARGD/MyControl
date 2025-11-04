@@ -60,9 +60,11 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Perfil
-          </DropdownMenuItem>
+          <Link href="/perfil">
+            <DropdownMenuItem>
+              Perfil
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>
             Facturación
           </DropdownMenuItem>
