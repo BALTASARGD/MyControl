@@ -25,6 +25,8 @@ export default function StatsCard({
   change,
 }: StatsCardProps) {
   const ChangeIcon = change > 0 ? ArrowUp : ArrowDown;
+  const showChange = change !== 0;
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -34,13 +36,17 @@ export default function StatsCard({
       <CardContent>
         <div className="text-2xl font-bold">{amount}</div>
         <p className="text-xs text-muted-foreground flex items-center">
-            <span className={cn(
-                "flex items-center gap-1",
-                change > 0 ? "text-green-600" : "text-red-600"
-            )}>
-                <ChangeIcon className="h-3 w-3" />
-                {description}
-            </span>
+            {showChange ? (
+                 <span className={cn(
+                    "flex items-center gap-1",
+                    change > 0 ? "text-green-600" : "text-red-600"
+                )}>
+                    <ChangeIcon className="h-3 w-3" />
+                    {description}
+                </span>
+            ) : (
+                <span>{description}</span>
+            )}
         </p>
       </CardContent>
     </Card>
