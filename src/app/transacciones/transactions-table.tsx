@@ -30,7 +30,6 @@ import {
   LucideIcon,
   HelpCircle, // Icono por defecto
 } from 'lucide-react';
-import { transactions as fallbackData } from '@/lib/data';
 
 // Mapeo de categorías en español a iconos
 const categoryIconMap: Record<string, LucideIcon> = {
@@ -41,6 +40,7 @@ const categoryIconMap: Record<string, LucideIcon> = {
   salud: Heart,
   ocio: HelpCircle, // Sin icono específico, usamos uno por defecto
   otros: HelpCircle, // Sin icono específico, usamos uno por defecto
+  restaurantes: Utensils,
 };
 
 const columns: ColumnDef<Transaction>[] = [
@@ -77,7 +77,7 @@ const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       const isIncome = row.original.type === 'income';
       return (
-        <Badge variant={isIncome ? 'success' : 'destructive'}>
+        <Badge variant={isIncome ? 'default' : 'destructive'} className={isIncome ? 'bg-green-600' : ''}>
           {isIncome ? 'Ingreso' : 'Gasto'}
         </Badge>
       );
@@ -94,6 +94,7 @@ const columns: ColumnDef<Transaction>[] = [
       }).format(row.original.amount);
       return (
         <span className={isIncome ? 'text-green-600' : 'text-red-600'}>
+          {isIncome ? '+' : '-'}
           {formattedAmount}
         </span>
       );
@@ -101,40 +102,13 @@ const columns: ColumnDef<Transaction>[] = [
   },
 ];
 
-export function TransactionsTable() {
+type TransactionsTableProps = {
+  data: Transaction[];
+  onFilterChange: (filteredData: Transaction[]) => void;
+};
+
+export function TransactionsTable({ data, onFilterChange }: TransactionsTableProps) {
   const [globalFilter, setGlobalFilter] = useState('');
-  const [data, setData] = useState<Transaction[]>([]);
-
-  const loadData = () => {
-    try {
-      const storedTransactions = localStorage.getItem('transactions');
-      if (storedTransactions) {
-        setData(JSON.parse(storedTransactions));
-      } else {
-        // Si no hay nada, cargamos los datos de ejemplo y los guardamos
-        localStorage.setItem('transactions', JSON.stringify(fallbackData));
-        setData(fallbackData);
-      }
-    } catch (error) {
-      console.error('Error loading transactions from localStorage', error);
-      setData(fallbackData); // fallback a datos de ejemplo en caso de error
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-
-    // Escuchar cambios en el localStorage
-    const handleStorageChange = () => {
-      loadData();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
 
   const table = useReactTable({
     data,
@@ -147,6 +121,11 @@ export function TransactionsTable() {
       globalFilter,
     },
   });
+
+  useEffect(() => {
+    const filteredData = table.getFilteredRowModel().rows.map(row => row.original);
+    onFilterChange(filteredData);
+  }, [globalFilter, data, table, onFilterChange]);
 
   return (
     <div className="space-y-4">
