@@ -49,6 +49,7 @@ export default function TransaccionesPage() {
     <main>
       <Header
         title="Transacciones"
+        showAddButton
         actions={
           <ClientOnly>
             <ExportTransactionsButton data={filteredTransactions} />
