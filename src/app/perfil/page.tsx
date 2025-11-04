@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -16,7 +16,6 @@ import { useAuth } from '@/lib/auth';
 import { Header } from '@/components/dashboard/header';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function PerfilPage() {
   const { user, updateUser, loading } = useAuth();
@@ -24,6 +23,7 @@ export default function PerfilPage() {
   const [email, setEmail] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -51,17 +51,27 @@ export default function PerfilPage() {
     });
   };
   
-  const handleChangePhoto = () => {
-    const userAvatars = PlaceHolderImages.filter(img => img.id.startsWith('user-avatar-'));
-    const currentIndex = userAvatars.findIndex(img => img.imageUrl === avatarUrl);
-    const nextIndex = (currentIndex + 1) % userAvatars.length;
-    const newAvatarUrl = userAvatars[nextIndex].imageUrl;
-    setAvatarUrl(newAvatarUrl);
-    updateUser({ avatarUrl: newAvatarUrl });
-     toast({
-      title: 'Foto de perfil actualizada',
-      description: 'Tu nueva foto de perfil ha sido guardada.',
-    });
+  const handleChangePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        const newAvatarUrl = loadEvent.target?.result as string;
+        if (newAvatarUrl) {
+          setAvatarUrl(newAvatarUrl);
+          updateUser({ avatarUrl: newAvatarUrl });
+          toast({
+            title: 'Foto de perfil actualizada',
+            description: 'Tu nueva foto de perfil ha sido guardada.',
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (loading) {
@@ -91,9 +101,16 @@ export default function PerfilPage() {
                     <AvatarImage src={avatarUrl} alt="User avatar" />
                     <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
-                  <Button type="button" variant="outline" size="sm" onClick={handleChangePhoto}>
+                  <Button type="button" variant="outline" size="sm" onClick={handleChangePhotoClick}>
                     Cambiar Foto
                   </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="name">Nombre</Label>
