@@ -29,10 +29,7 @@ export function Header({ title }: { title: string }) {
       <ClientOnly>
         <Sheet>
           <SheetTrigger asChild>
-            <Button size="icon" variant="outline" className="sm:hidden">
-              <SidebarTrigger />
-              <span className="sr-only">Toggle Menu</span>
-            </Button>
+            <SidebarTrigger className="sm:hidden" />
           </SheetTrigger>
           <SheetContent side="left" className="sm:max-w-xs">
             <nav className="grid gap-6 text-lg font-medium">
