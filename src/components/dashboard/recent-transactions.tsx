@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -5,13 +7,64 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { transactions } from '@/lib/data';
+import type { Transaction } from '@/lib/types';
+import { transactions as fallbackData } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import {
+  ShoppingCart,
+  Utensils,
+  Home,
+  Car,
+  Heart,
+  LucideIcon,
+  HelpCircle,
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+const categoryIconMap: Record<string, LucideIcon> = {
+  compras: ShoppingCart,
+  restaurantes: Utensils,
+  vivienda: Home,
+  transporte: Car,
+  salud: Heart,
+  ocio: HelpCircle,
+  otros: HelpCircle,
+};
 
 export default function RecentTransactions() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  const loadData = () => {
+    try {
+      const storedTransactions = localStorage.getItem('transactions');
+      const allTransactions = storedTransactions
+        ? JSON.parse(storedTransactions)
+        : fallbackData;
+      
+      // Ordenamos por fecha y tomamos las últimas 5
+      const recent = allTransactions
+        .sort((a: Transaction, b: Transaction) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5);
+
+      setTransactions(recent);
+    } catch (error) {
+      console.error('Error loading recent transactions:', error);
+      setTransactions(fallbackData.slice(0, 5));
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+    const handleStorageChange = () => loadData();
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center">
@@ -22,36 +75,39 @@ export default function RecentTransactions() {
             </CardDescription>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
-          <Link href="#">
+          <Link href="/transacciones">
             Ver Todas
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </Button>
       </CardHeader>
       <CardContent className="grid gap-4">
-        {transactions.map((transaction) => (
-          <div key={transaction.id} className="flex items-center gap-4">
-            <Avatar className="hidden h-9 w-9 sm:flex">
-              <AvatarFallback>
-                <transaction.categoryIcon className="h-5 w-5 text-muted-foreground" />
-              </AvatarFallback>
-            </Avatar>
-            <div className="grid gap-1">
-              <p className="text-sm font-medium leading-none">
-                {transaction.category}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {transaction.description}
-              </p>
+        {transactions.map((transaction) => {
+          const Icon = categoryIconMap[transaction.category.toLowerCase()] || HelpCircle;
+          return (
+            <div key={transaction.id} className="flex items-center gap-4">
+              <Avatar className="hidden h-9 w-9 sm:flex">
+                <AvatarFallback>
+                  <Icon className="h-5 w-5 text-muted-foreground" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="grid gap-1">
+                <p className="text-sm font-medium leading-none">
+                  {transaction.category}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {transaction.description}
+                </p>
+              </div>
+              <div className="ml-auto font-medium text-right">
+                - {transaction.amount.toFixed(2)}€
+                <p className="text-xs text-muted-foreground font-normal">
+                  {new Date(transaction.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+                </p>
+              </div>
             </div>
-            <div className="ml-auto font-medium text-right">
-              - {transaction.amount.toFixed(2)}€
-              <p className="text-xs text-muted-foreground font-normal">
-                {new Date(transaction.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
-              </p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </CardContent>
     </Card>
   );

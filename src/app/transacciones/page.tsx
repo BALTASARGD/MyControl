@@ -1,13 +1,15 @@
 import { Header } from '@/components/dashboard/header';
-import { transactions } from '@/lib/data';
 import { TransactionsTable } from './transactions-table';
+import { ClientOnly } from '@/components/client-only';
 
 export default function TransaccionesPage() {
   return (
     <main>
       <Header title="Transacciones" />
       <div className="p-4 sm:p-6">
-        <TransactionsTable data={transactions} />
+        <ClientOnly>
+          <TransactionsTable />
+        </ClientOnly>
       </div>
     </main>
   );

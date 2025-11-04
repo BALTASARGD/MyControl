@@ -32,6 +32,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import type { Transaction } from '@/lib/types';
 
 const transactionFormSchema = z.object({
   type: z.enum(['income', 'expense'], {
@@ -57,21 +58,21 @@ export function AddTransactionDialog() {
 
   async function onSubmit(data: TransactionFormValues) {
     try {
-      const response = await fetch('/api/transactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const existingTransactions: Transaction[] = JSON.parse(
+        localStorage.getItem('transactions') || '[]',
+      );
+      const newTransaction: Transaction = {
+        ...data,
+        id: new Date().toISOString(),
+      };
+      const updatedTransactions = [...existingTransactions, newTransaction];
+      localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
 
-      if (response.ok) {
-        console.log('Transaction saved successfully!');
-        setOpen(false);
-        router.refresh();
-      } else {
-        console.error('Failed to save transaction');
-      }
+      console.log('Transaction saved successfully!');
+      setOpen(false);
+      // Disparar un evento para que otras partes de la app sepan que se actualizaron las transacciones
+      window.dispatchEvent(new Event('storage'));
+      router.refresh();
     } catch (error) {
       console.error('Error saving transaction: ', error);
     }

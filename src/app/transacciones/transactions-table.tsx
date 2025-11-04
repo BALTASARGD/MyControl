@@ -30,6 +30,7 @@ import {
   LucideIcon,
   HelpCircle, // Icono por defecto
 } from 'lucide-react';
+import { transactions as fallbackData } from '@/lib/data';
 
 // Mapeo de categorías en español a iconos
 const categoryIconMap: Record<string, LucideIcon> = {
@@ -104,21 +105,35 @@ export function TransactionsTable() {
   const [globalFilter, setGlobalFilter] = useState('');
   const [data, setData] = useState<Transaction[]>([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/transactions');
-        if (response.ok) {
-          const transactions = await response.json();
-          setData(transactions);
-        } else {
-          console.error('Failed to fetch transactions');
-        }
-      } catch (error) {
-        console.error('Error fetching transactions', error);
+  const loadData = () => {
+    try {
+      const storedTransactions = localStorage.getItem('transactions');
+      if (storedTransactions) {
+        setData(JSON.parse(storedTransactions));
+      } else {
+        // Si no hay nada, cargamos los datos de ejemplo y los guardamos
+        localStorage.setItem('transactions', JSON.stringify(fallbackData));
+        setData(fallbackData);
       }
+    } catch (error) {
+      console.error('Error loading transactions from localStorage', error);
+      setData(fallbackData); // fallback a datos de ejemplo en caso de error
     }
-    fetchData();
+  };
+
+  useEffect(() => {
+    loadData();
+
+    // Escuchar cambios en el localStorage
+    const handleStorageChange = () => {
+      loadData();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const table = useReactTable({

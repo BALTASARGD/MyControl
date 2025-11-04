@@ -1,5 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
-
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
