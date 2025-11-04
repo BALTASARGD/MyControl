@@ -8,13 +8,15 @@ export default function TransaccionesPage() {
     <main>
       <Header
         title="Transacciones"
-        actions={<ExportTransactionsButton />}
+        actions={
+          <ClientOnly>
+            <ExportTransactionsButton />
+          </ClientOnly>
+        }
       />
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6" id="transactions-content">
         <ClientOnly>
-          <div id="transactions-content">
-            <TransactionsTable />
-          </div>
+          <TransactionsTable />
         </ClientOnly>
       </div>
     </main>
