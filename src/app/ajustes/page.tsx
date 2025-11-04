@@ -30,6 +30,7 @@ export default function AjustesPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleDeleteData = () => {
+    // This code runs only on the client side
     localStorage.removeItem('transactions');
     window.dispatchEvent(new Event('storage'));
     setIsDialogOpen(false);
