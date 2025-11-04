@@ -52,6 +52,7 @@ export function AddTransactionDialog() {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
+      type: 'expense',
       date: new Date().toISOString().split('T')[0],
     },
   });
@@ -59,20 +60,24 @@ export function AddTransactionDialog() {
   async function onSubmit(data: TransactionFormValues) {
     try {
       const existingTransactions: Transaction[] = JSON.parse(
-        localStorage.getItem('transactions') || '[]',
+        localStorage.getItem('transactions') || '[]'
       );
       const newTransaction: Transaction = {
         ...data,
         id: new Date().toISOString(),
       };
       const updatedTransactions = [...existingTransactions, newTransaction];
-      localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+      localStorage.setItem(
+        'transactions',
+        JSON.stringify(updatedTransactions)
+      );
 
       console.log('Transaction saved successfully!');
       setOpen(false);
       // Disparar un evento para que otras partes de la app sepan que se actualizaron las transacciones
       window.dispatchEvent(new Event('storage'));
       router.refresh();
+      form.reset();
     } catch (error) {
       console.error('Error saving transaction: ', error);
     }
@@ -128,7 +133,7 @@ export function AddTransactionDialog() {
                 <FormItem>
                   <FormLabel>Monto</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0.00" {...field} />
+                    <Input type="number" placeholder="0.00" {...field} step="0.01" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
