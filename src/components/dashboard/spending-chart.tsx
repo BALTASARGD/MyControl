@@ -14,43 +14,45 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart';
 import { categorySpending } from '@/lib/data';
+import { useI18n } from '@/lib/i18n';
 
 const chartConfig = {
   spent: {
-    label: 'Gastado',
+    label: 'Spent',
   },
   Vivienda: {
-    label: 'Vivienda',
+    label: 'Housing',
     color: 'hsl(var(--chart-1))',
   },
   Compras: {
-    label: 'Compras',
+    label: 'Shopping',
     color: 'hsl(var(--chart-2))',
   },
   Transporte: {
-    label: 'Transporte',
+    label: 'Transport',
     color: 'hsl(var(--chart-3))',
   },
   Restaurantes: {
-    label: 'Restaurantes',
+    label: 'Restaurants',
     color: 'hsl(var(--chart-4))',
   },
   Ocio: {
-    label: 'Ocio',
+    label: 'Leisure',
     color: 'hsl(var(--chart-5))',
   },
   Otros: {
-    label: 'Otros',
+    label: 'Others',
     color: 'hsl(var(--muted-foreground))',
   },
 } satisfies ChartConfig;
 
 export default function SpendingChart() {
+  const { t } = useI18n();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gastos por Categoría</CardTitle>
-        <CardDescription>Julio 2024</CardDescription>
+        <CardTitle>{t('spending_by_category')}</CardTitle>
+        <CardDescription>July 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">

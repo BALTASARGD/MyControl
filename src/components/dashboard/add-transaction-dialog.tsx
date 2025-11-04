@@ -33,6 +33,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import type { Transaction } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 
 const transactionFormSchema = z.object({
   type: z.enum(['income', 'expense'], {
@@ -49,6 +50,8 @@ type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 export function AddTransactionDialog() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { t } = useI18n();
+
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
@@ -89,15 +92,15 @@ export function AddTransactionDialog() {
         <Button size="sm" className="gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Añadir
+            {t('add')}
           </span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Añadir Transacción</DialogTitle>
+          <DialogTitle>{t('add_transaction')}</DialogTitle>
           <DialogDescription>
-            Registra un nuevo ingreso o gasto.
+            {t('register_new_income_expense')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -107,19 +110,19 @@ export function AddTransactionDialog() {
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo</FormLabel>
+                  <FormLabel>{t('type')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un tipo" />
+                        <SelectValue placeholder={t('select_type')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="income">Ingreso</SelectItem>
-                      <SelectItem value="expense">Gasto</SelectItem>
+                      <SelectItem value="income">{t('income')}</SelectItem>
+                      <SelectItem value="expense">{t('expense')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -131,9 +134,9 @@ export function AddTransactionDialog() {
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Monto</FormLabel>
+                  <FormLabel>{t('amount')}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0.00" {...field} step="0.01" />
+                    <Input type="number" placeholder={t('amount_placeholder')} {...field} step="0.01" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -144,9 +147,9 @@ export function AddTransactionDialog() {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descripción</FormLabel>
+                  <FormLabel>{t('description')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Supermercado" {...field} />
+                    <Input placeholder={t('description_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -157,14 +160,14 @@ export function AddTransactionDialog() {
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Categoría</FormLabel>
+                  <FormLabel>{t('category')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una categoría" />
+                        <SelectValue placeholder={t('select_category')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -186,7 +189,7 @@ export function AddTransactionDialog() {
               name="date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Fecha</FormLabel>
+                  <FormLabel>{t('date')}</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -195,7 +198,7 @@ export function AddTransactionDialog() {
               )}
             />
             <DialogFooter>
-              <Button type="submit">Guardar</Button>
+              <Button type="submit">{t('save')}</Button>
             </DialogFooter>
           </form>
         </Form>

@@ -18,10 +18,11 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { useI18n } from '@/lib/i18n';
+import { LanguageSwitcher } from './language-switcher';
 
 export function Header({
   title,
@@ -32,6 +33,7 @@ export function Header({
   actions?: React.ReactNode;
   showAddButton?: boolean;
 }) {
+  const { t } = useI18n();
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <ClientOnly>
@@ -53,28 +55,28 @@ export function Header({
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
                 <LayoutDashboard className="h-5 w-5" />
-                Dashboard
+                {t('dashboard')}
               </Link>
               <Link
                 href="#"
                 className="flex items-center gap-4 px-2.5 text-foreground"
               >
                 <ArrowLeftRight className="h-5 w-5" />
-                Transacciones
+                {t('transactions')}
               </Link>
               <Link
                 href="#"
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
                 <Target className="h-5 w-5" />
-                Presupuestos
+                {t('budgets')}
               </Link>
               <Link
                 href="#"
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
                 <BarChart3 className="h-5 w-5" />
-                Reportes
+                {t('reports')}
               </Link>
             </nav>
           </SheetContent>
@@ -83,13 +85,13 @@ export function Header({
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" className="h-7 w-7">
           <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Volver</span>
+          <span className="sr-only">{t('back')}</span>
         </Button>
         <Breadcrumb className="hidden md:flex">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/">Dashboard</Link>
+                <Link href="/">{t('dashboard')}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -102,6 +104,7 @@ export function Header({
       <div className="ml-auto flex items-center gap-2">
         {actions}
         {showAddButton && <AddTransactionDialog />}
+        <LanguageSwitcher />
         <ClientOnly>
           <UserNav />
         </ClientOnly>

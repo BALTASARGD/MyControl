@@ -7,8 +7,10 @@ import { ClientOnly } from '@/components/client-only';
 import { ExportTransactionsButton } from './export-transactions-button';
 import type { Transaction } from '@/lib/types';
 import { transactions as fallbackData } from '@/lib/data';
+import { useI18n } from '@/lib/i18n';
 
 export default function TransaccionesPage() {
+  const { t } = useI18n();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
 
@@ -48,7 +50,7 @@ export default function TransaccionesPage() {
   return (
     <main>
       <Header
-        title="Transacciones"
+        title={t('transactions')}
         showAddButton
         actions={
           <ClientOnly>

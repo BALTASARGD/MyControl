@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { analyzeSpendingAndAlert } from '@/ai/flows/budget-alerts';
+import { useI18n } from '@/lib/i18n';
 
 export default function BudgetAlerts() {
+  const { t } = useI18n();
   const [budgetAnalysis, setBudgetAnalysis] = useState<{alert: boolean, message: string} | null>(null);
 
   useEffect(() => {
@@ -19,9 +21,6 @@ export default function BudgetAlerts() {
         { date: '2024-07-22', amount: 75.6 },
       ];
 
-      // La variable de entorno solo se puede leer en el servidor,
-      // pero este es un componente de cliente. Por ahora, asumimos que puede
-      // hacer la llamada. En un futuro podríamos mover la lógica de la API a un 'server action'.
       try {
         const analysis = await analyzeSpendingAndAlert({
           category: 'Compras',
@@ -33,7 +32,7 @@ export default function BudgetAlerts() {
         console.error("Error analyzing budget:", error);
         setBudgetAnalysis({
           alert: true,
-          message: 'No se pudo analizar el presupuesto. Revisa la consola para más detalles.',
+          message: 'Could not analyze budget. Check console for details.',
         });
       }
     }
@@ -44,20 +43,20 @@ export default function BudgetAlerts() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Alertas de Presupuesto</CardTitle>
+        <CardTitle>{t('budget_alerts')}</CardTitle>
       </CardHeader>
       <CardContent>
         {!budgetAnalysis ? (
-          <div className="text-sm text-muted-foreground">Analizando...</div>
+          <div className="text-sm text-muted-foreground">{t('analyzing')}...</div>
         ) : budgetAnalysis.alert ? (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>¡Atención!</AlertTitle>
+            <AlertTitle>{t('attention')}!</AlertTitle>
             <AlertDescription>{budgetAnalysis.message}</AlertDescription>
           </Alert>
         ) : (
           <div className="text-sm text-muted-foreground">
-            No hay alertas. ¡Vas por buen camino!
+            {t('no_alerts')}
           </div>
         )}
       </CardContent>

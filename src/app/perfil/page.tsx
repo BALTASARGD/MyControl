@@ -16,8 +16,10 @@ import { useAuth } from '@/lib/auth';
 import { Header } from '@/components/dashboard/header';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useI18n } from '@/lib/i18n';
 
 export default function PerfilPage() {
+  const { t } = useI18n();
   const { user, updateUser, loading } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -37,8 +39,8 @@ export default function PerfilPage() {
     e.preventDefault();
     updateUser({ name, email });
     toast({
-      title: 'Perfil actualizado',
-      description: 'Tus datos han sido guardados correctamente.',
+      title: t('profile_updated'),
+      description: t('profile_updated_desc'),
     });
   };
 
@@ -46,8 +48,8 @@ export default function PerfilPage() {
     e.preventDefault();
     // En una app real, aquí iría la lógica para cambiar la contraseña
     toast({
-      title: 'Contraseña actualizada',
-      description: 'Tu contraseña ha sido cambiada con éxito (simulado).',
+      title: t('password_updated'),
+      description: t('password_updated_desc'),
     });
   };
   
@@ -65,8 +67,8 @@ export default function PerfilPage() {
           setAvatarUrl(newAvatarUrl);
           updateUser({ avatarUrl: newAvatarUrl });
           toast({
-            title: 'Foto de perfil actualizada',
-            description: 'Tu nueva foto de perfil ha sido guardada.',
+            title: t('avatar_updated'),
+            description: t('avatar_updated_desc'),
           });
         }
       };
@@ -75,24 +77,24 @@ export default function PerfilPage() {
   };
 
   if (loading) {
-    return <div className="flex h-screen items-center justify-center">Cargando...</div>;
+    return <div className="flex h-screen items-center justify-center">{t('loading')}...</div>;
   }
 
   if (!user) {
-    return <div className="flex h-screen items-center justify-center">No has iniciado sesión.</div>;
+    return <div className="flex h-screen items-center justify-center">{t('not_logged_in')}</div>;
   }
 
   return (
     <main>
-      <Header title="Perfil" />
+      <Header title={t('profile')} />
       <div className="p-4 sm:p-6">
         <div className="max-w-2xl grid gap-6">
           <Card>
             <form onSubmit={handleProfileSubmit}>
               <CardHeader>
-                <CardTitle>Tu Perfil</CardTitle>
+                <CardTitle>{t('your_profile')}</CardTitle>
                 <CardDescription>
-                  Actualiza tu foto, nombre y dirección de correo electrónico.
+                  {t('update_profile_info')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -102,7 +104,7 @@ export default function PerfilPage() {
                     <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                   <Button type="button" variant="outline" size="sm" onClick={handleChangePhotoClick}>
-                    Cambiar Foto
+                    {t('change_photo')}
                   </Button>
                   <input
                     type="file"
@@ -113,7 +115,7 @@ export default function PerfilPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nombre</Label>
+                  <Label htmlFor="name">{t('name')}</Label>
                   <Input
                     id="name"
                     value={name}
@@ -133,7 +135,7 @@ export default function PerfilPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Guardar Cambios</Button>
+                <Button type="submit">{t('save_changes')}</Button>
               </CardFooter>
             </form>
           </Card>
@@ -141,23 +143,23 @@ export default function PerfilPage() {
           <Card>
             <form onSubmit={handlePasswordSubmit}>
               <CardHeader>
-                <CardTitle>Seguridad</CardTitle>
+                <CardTitle>{t('security')}</CardTitle>
                 <CardDescription>
-                  Cambia tu contraseña.
+                  {t('change_your_password')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="current-password">Contraseña Actual</Label>
+                  <Label htmlFor="current-password">{t('current_password')}</Label>
                   <Input id="current-password" type="password" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="new-password">Nueva Contraseña</Label>
+                  <Label htmlFor="new-password">{t('new_password')}</Label>
                   <Input id="new-password" type="password" />
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Cambiar Contraseña</Button>
+                <Button type="submit">{t('change_password')}</Button>
               </CardFooter>
             </form>
           </Card>

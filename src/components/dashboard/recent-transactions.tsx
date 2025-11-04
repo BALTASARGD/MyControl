@@ -23,6 +23,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 const categoryIconMap: Record<string, LucideIcon> = {
   compras: ShoppingCart,
@@ -35,6 +36,7 @@ const categoryIconMap: Record<string, LucideIcon> = {
 };
 
 export default function RecentTransactions() {
+  const { t } = useI18n();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const loadData = () => {
@@ -69,14 +71,14 @@ export default function RecentTransactions() {
     <Card>
       <CardHeader className="flex flex-row items-center">
         <div className="grid gap-2">
-            <CardTitle>Transacciones Recientes</CardTitle>
+            <CardTitle>{t('recent_transactions')}</CardTitle>
             <CardDescription>
-                Últimos 5 movimientos.
+                {t('last_5_movements')}
             </CardDescription>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
           <Link href="/transacciones">
-            Ver Todas
+            {t('view_all')}
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </Button>

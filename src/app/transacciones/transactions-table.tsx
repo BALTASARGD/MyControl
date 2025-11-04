@@ -30,6 +30,7 @@ import {
   LucideIcon,
   HelpCircle, // Icono por defecto
 } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 // Mapeo de categorías en español a iconos
 const categoryIconMap: Record<string, LucideIcon> = {
@@ -43,72 +44,71 @@ const categoryIconMap: Record<string, LucideIcon> = {
   restaurantes: Utensils,
 };
 
-const columns: ColumnDef<Transaction>[] = [
-  {
-    accessorKey: 'category',
-    header: 'Categoría',
-    cell: ({ row }) => {
-      const Icon = categoryIconMap[row.original.category.toLowerCase()] || HelpCircle;
-      return (
-        <div className="flex items-center gap-2">
-          <Icon className="size-4 text-muted-foreground" />
-          <span>{row.original.category}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'description',
-    header: 'Descripción',
-  },
-  {
-    accessorKey: 'date',
-    header: 'Fecha',
-    cell: ({ row }) =>
-      new Date(row.original.date).toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-      }),
-  },
-  {
-    accessorKey: 'type',
-    header: 'Tipo',
-    cell: ({ row }) => {
-      const isIncome = row.original.type === 'income';
-      return (
-        <Badge variant={isIncome ? 'default' : 'destructive'} className={isIncome ? 'bg-green-600' : ''}>
-          {isIncome ? 'Ingreso' : 'Gasto'}
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: 'amount',
-    header: 'Monto',
-    cell: ({ row }) => {
-      const isIncome = row.original.type === 'income';
-      const formattedAmount = new Intl.NumberFormat('es-ES', {
-        style: 'currency',
-        currency: 'EUR',
-      }).format(row.original.amount);
-      return (
-        <span className={isIncome ? 'text-green-600' : 'text-red-600'}>
-          {isIncome ? '+' : '-'}
-          {formattedAmount}
-        </span>
-      );
-    },
-  },
-];
-
-type TransactionsTableProps = {
+export function TransactionsTable({ data, onFilterChange }: {
   data: Transaction[];
   onFilterChange: (filteredData: Transaction[]) => void;
-};
-
-export function TransactionsTable({ data, onFilterChange }: TransactionsTableProps) {
+}) {
+  const { t } = useI18n();
   const [globalFilter, setGlobalFilter] = useState('');
+
+  const columns: ColumnDef<Transaction>[] = [
+    {
+      accessorKey: 'category',
+      header: t('category'),
+      cell: ({ row }) => {
+        const Icon = categoryIconMap[row.original.category.toLowerCase()] || HelpCircle;
+        return (
+          <div className="flex items-center gap-2">
+            <Icon className="size-4 text-muted-foreground" />
+            <span>{row.original.category}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'description',
+      header: t('description'),
+    },
+    {
+      accessorKey: 'date',
+      header: t('date'),
+      cell: ({ row }) =>
+        new Date(row.original.date).toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+        }),
+    },
+    {
+      accessorKey: 'type',
+      header: t('type'),
+      cell: ({ row }) => {
+        const isIncome = row.original.type === 'income';
+        return (
+          <Badge variant={isIncome ? 'default' : 'destructive'} className={isIncome ? 'bg-green-600' : ''}>
+            {isIncome ? t('income') : t('expense')}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: 'amount',
+      header: t('amount'),
+      cell: ({ row }) => {
+        const isIncome = row.original.type === 'income';
+        const formattedAmount = new Intl.NumberFormat('es-ES', {
+          style: 'currency',
+          currency: 'EUR',
+        }).format(row.original.amount);
+        return (
+          <span className={isIncome ? 'text-green-600' : 'text-red-600'}>
+            {isIncome ? '+' : '-'}
+            {formattedAmount}
+          </span>
+        );
+      },
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -130,7 +130,7 @@ export function TransactionsTable({ data, onFilterChange }: TransactionsTablePro
   return (
     <div className="space-y-4">
       <Input
-        placeholder="Filtrar transacciones..."
+        placeholder={t('filter_transactions')}
         value={globalFilter}
         onChange={(e) => setGlobalFilter(e.target.value)}
         className="max-w-sm"
@@ -168,7 +168,7 @@ export function TransactionsTable({ data, onFilterChange }: TransactionsTablePro
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No hay resultados.
+                  {t('no_results')}
                 </TableCell>
               </TableRow>
             )}
@@ -182,7 +182,7 @@ export function TransactionsTable({ data, onFilterChange }: TransactionsTablePro
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Anterior
+          {t('previous')}
         </Button>
         <Button
           variant="outline"
@@ -190,7 +190,7 @@ export function TransactionsTable({ data, onFilterChange }: TransactionsTablePro
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Siguiente
+          {t('next')}
         </Button>
       </div>
     </div>

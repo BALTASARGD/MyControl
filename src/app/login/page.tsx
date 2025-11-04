@@ -12,10 +12,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/auth';
+import { useI18n } from '@/lib/i18n';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function LoginPage() {
+  const { t } = useI18n();
   const [email, setEmail] = useState('usuario@micontrol.com');
   const [name, setName] = useState('Usuario');
   const { login } = useAuth();
@@ -34,18 +36,18 @@ export default function LoginPage() {
     <div className="flex h-screen w-full items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
+          <CardTitle className="text-2xl">{t('login')}</CardTitle>
           <CardDescription>
-            Ingresa tus datos para acceder al dashboard.
+            {t('login_to_dashboard')}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Nombre</Label>
+            <Label htmlFor="name">{t('name')}</Label>
             <Input
               id="name"
               type="text"
-              placeholder="Tu nombre"
+              placeholder={t('your_name')}
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -65,7 +67,7 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter>
           <Button className="w-full" onClick={handleLogin}>
-            Iniciar Sesión
+            {t('login')}
           </Button>
         </CardFooter>
       </Card>

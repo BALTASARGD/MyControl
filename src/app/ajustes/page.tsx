@@ -23,8 +23,10 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Header } from '@/components/dashboard/header';
+import { useI18n } from '@/lib/i18n';
 
 export default function AjustesPage() {
+  const { t } = useI18n();
   const { setTheme, theme } = useTheme();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -39,14 +41,14 @@ export default function AjustesPage() {
 
   return (
     <main>
-      <Header title="Ajustes" />
+      <Header title={t('settings')} />
       <div className="p-4 sm:p-6">
         <div className="grid gap-6 max-w-2xl">
           <Card>
             <CardHeader>
-              <CardTitle>Apariencia</CardTitle>
+              <CardTitle>{t('appearance')}</CardTitle>
               <CardDescription>
-                Personaliza la apariencia de la aplicación.
+                {t('customize_appearance')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -56,24 +58,24 @@ export default function AjustesPage() {
                   checked={theme === 'dark'}
                   onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
                 />
-                <Label htmlFor="theme-switch">Tema Oscuro</Label>
+                <Label htmlFor="theme-switch">{t('dark_theme')}</Label>
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Gestión de Datos</CardTitle>
+              <CardTitle>{t('data_management')}</CardTitle>
               <CardDescription>
-                Administra los datos de tu aplicación.
+                {t('manage_app_data')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="destructive" onClick={() => setIsDialogOpen(true)}>
-                Borrar todas las transacciones
+                {t('delete_all_transactions')}
               </Button>
               <p className="text-sm text-muted-foreground mt-2">
-                Esta acción es irreversible y eliminará todos los datos de transacciones almacenados localmente.
+                {t('action_irreversible')}
               </p>
             </CardContent>
           </Card>
@@ -82,16 +84,15 @@ export default function AjustesPage() {
         <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+              <AlertDialogTitle>{t('are_you_sure')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Esta acción no se puede deshacer. Se eliminarán permanentemente
-                todas tus transacciones del almacenamiento local.
+                {t('action_cannot_be_undone')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
               <AlertDialogAction onClick={handleDeleteData} className="bg-destructive hover:bg-destructive/90">
-                Sí, borrar datos
+                {t('confirm_delete')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

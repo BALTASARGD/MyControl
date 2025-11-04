@@ -5,6 +5,7 @@ import { Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import type { Transaction } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -13,12 +14,13 @@ declare module 'jspdf' {
 }
 
 export function ExportTransactionsButton({ data }: { data: Transaction[] }) {
+  const { t } = useI18n();
   const handleExport = () => {
     const doc = new jsPDF();
 
-    doc.text('Reporte de Transacciones', 14, 16);
+    doc.text(t('report_of_transactions'), 14, 16);
 
-    const tableColumn = ['Fecha', 'Categoría', 'Descripción', 'Tipo', 'Monto'];
+    const tableColumn = [t('date'), t('category'), t('description'), t('type'), t('amount')];
     const tableRows: (string | number)[][] = [];
 
     data.forEach((transaction) => {
@@ -26,7 +28,7 @@ export function ExportTransactionsButton({ data }: { data: Transaction[] }) {
         new Date(transaction.date).toLocaleDateString('es-ES'),
         transaction.category,
         transaction.description,
-        transaction.type === 'income' ? 'Ingreso' : 'Gasto',
+        transaction.type === 'income' ? t('income') : t('expense'),
         new Intl.NumberFormat('es-ES', {
           style: 'currency',
           currency: 'EUR',
@@ -47,7 +49,7 @@ export function ExportTransactionsButton({ data }: { data: Transaction[] }) {
   return (
     <Button variant="outline" size="sm" onClick={handleExport}>
       <Download className="mr-2 h-4 w-4" />
-      Exportar PDF
+      {t('export_pdf')}
     </Button>
   );
 }

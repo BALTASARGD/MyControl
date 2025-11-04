@@ -1,3 +1,5 @@
+'use client';
+
 import type { Budget } from '@/lib/types';
 import {
   Card,
@@ -8,8 +10,10 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n';
 
 export function BudgetCard({ budget }: { budget: Budget }) {
+  const { t } = useI18n();
   const percentage = (budget.spent / budget.limit) * 100;
   const formattedSpent = new Intl.NumberFormat('es-ES', {
     style: 'currency',
@@ -25,7 +29,7 @@ export function BudgetCard({ budget }: { budget: Budget }) {
       <CardHeader>
         <CardTitle>{budget.category}</CardTitle>
         <CardDescription>
-          {formattedSpent} de {formattedLimit}
+          {formattedSpent} {t('of')} {formattedLimit}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -37,14 +41,14 @@ export function BudgetCard({ budget }: { budget: Budget }) {
           )}
         >
           {percentage > 100
-            ? `Te has pasado por ${new Intl.NumberFormat('es-ES', {
+            ? `${t('overspent_by')} ${new Intl.NumberFormat('es-ES', {
                 style: 'currency',
                 currency: 'EUR',
               }).format(budget.spent - budget.limit)}`
             : `${new Intl.NumberFormat('es-ES', {
                 style: 'currency',
                 currency: 'EUR',
-              }).format(budget.limit - budget.spent)} restantes`}
+              }).format(budget.limit - budget.spent)} ${t('remaining')}`}
         </p>
       </CardContent>
     </Card>

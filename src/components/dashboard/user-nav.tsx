@@ -13,10 +13,12 @@ import {
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
+import { useI18n } from '@/lib/i18n';
 
 export function UserNav() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const { t } = useI18n();
 
   const handleLogout = () => {
     logout();
@@ -26,7 +28,7 @@ export function UserNav() {
   if (!user) {
     return (
       <Button asChild>
-        <Link href="/login">Iniciar Sesión</Link>
+        <Link href="/login">{t('login')}</Link>
       </Button>
     );
   }
@@ -59,20 +61,20 @@ export function UserNav() {
         <DropdownMenuGroup>
           <Link href="/perfil">
             <DropdownMenuItem>
-              Perfil
+              {t('profile')}
             </DropdownMenuItem>
           </Link>
           <DropdownMenuItem>
-            Facturación
+            {t('billing')}
           </DropdownMenuItem>
           <Link href="/ajustes">
             <DropdownMenuItem>
-              Ajustes
+              {t('settings')}
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>Cerrar sesión</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>{t('logout')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
