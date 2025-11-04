@@ -15,17 +15,21 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/auth';
 import { Header } from '@/components/dashboard/header';
 import { useToast } from '@/hooks/use-toast';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function PerfilPage() {
   const { user, updateUser, loading } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
+      setAvatarUrl(user.avatarUrl);
     }
   }, [user]);
 
@@ -44,6 +48,19 @@ export default function PerfilPage() {
     toast({
       title: 'Contraseña actualizada',
       description: 'Tu contraseña ha sido cambiada con éxito (simulado).',
+    });
+  };
+  
+  const handleChangePhoto = () => {
+    const userAvatars = PlaceHolderImages.filter(img => img.id.startsWith('user-avatar-'));
+    const currentIndex = userAvatars.findIndex(img => img.imageUrl === avatarUrl);
+    const nextIndex = (currentIndex + 1) % userAvatars.length;
+    const newAvatarUrl = userAvatars[nextIndex].imageUrl;
+    setAvatarUrl(newAvatarUrl);
+    updateUser({ avatarUrl: newAvatarUrl });
+     toast({
+      title: 'Foto de perfil actualizada',
+      description: 'Tu nueva foto de perfil ha sido guardada.',
     });
   };
 
@@ -65,10 +82,19 @@ export default function PerfilPage() {
               <CardHeader>
                 <CardTitle>Tu Perfil</CardTitle>
                 <CardDescription>
-                  Actualiza tu nombre y dirección de correo electrónico.
+                  Actualiza tu foto, nombre y dirección de correo electrónico.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                 <div className="space-y-2 flex flex-col items-center">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage src={avatarUrl} alt="User avatar" />
+                    <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                  </Avatar>
+                  <Button type="button" variant="outline" size="sm" onClick={handleChangePhoto}>
+                    Cambiar Foto
+                  </Button>
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="name">Nombre</Label>
                   <Input

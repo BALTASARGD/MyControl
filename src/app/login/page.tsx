@@ -22,6 +22,10 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleLogin = () => {
+    if (!name || !email) {
+      // Opcional: mostrar un error si los campos están vacíos
+      return;
+    }
     login(name, email);
     router.push('/');
   };

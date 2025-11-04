@@ -1,10 +1,12 @@
 'use client';
 
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface User {
   name: string;
   email: string;
+  avatarUrl: string;
 }
 
 interface AuthContextType {
@@ -35,7 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = (name: string, email: string) => {
-    const userData = { name, email };
+    const defaultAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
+    const userData = { name, email, avatarUrl: defaultAvatar?.imageUrl || '' };
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
