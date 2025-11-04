@@ -29,15 +29,24 @@ export default function PerfilPage() {
     }
   }, [user]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleProfileSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateUser({ name, email });
     toast({
-        title: 'Perfil actualizado',
-        description: 'Tus datos han sido guardados correctamente.',
-    })
+      title: 'Perfil actualizado',
+      description: 'Tus datos han sido guardados correctamente.',
+    });
   };
-  
+
+  const handlePasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // En una app real, aquí iría la lógica para cambiar la contraseña
+    toast({
+      title: 'Contraseña actualizada',
+      description: 'Tu contraseña ha sido cambiada con éxito (simulado).',
+    });
+  };
+
   if (loading) {
     return <div className="flex h-screen items-center justify-center">Cargando...</div>;
   }
@@ -50,9 +59,9 @@ export default function PerfilPage() {
     <main>
       <Header title="Perfil" />
       <div className="p-4 sm:p-6">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl grid gap-6">
           <Card>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleProfileSubmit}>
               <CardHeader>
                 <CardTitle>Tu Perfil</CardTitle>
                 <CardDescription>
@@ -75,13 +84,37 @@ export default function PerfilPage() {
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.event.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
               </CardContent>
               <CardFooter>
                 <Button type="submit">Guardar Cambios</Button>
+              </CardFooter>
+            </form>
+          </Card>
+
+          <Card>
+            <form onSubmit={handlePasswordSubmit}>
+              <CardHeader>
+                <CardTitle>Seguridad</CardTitle>
+                <CardDescription>
+                  Cambia tu contraseña.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="current-password">Contraseña Actual</Label>
+                  <Input id="current-password" type="password" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">Nueva Contraseña</Label>
+                  <Input id="new-password" type="password" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit">Cambiar Contraseña</Button>
               </CardFooter>
             </form>
           </Card>
