@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Link from 'next/link';
 
 export function UserNav() {
   const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar');
@@ -42,9 +43,17 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Perfil</DropdownMenuItem>
-          <DropdownMenuItem>Facturación</DropdownMenuItem>
-          <DropdownMenuItem>Ajustes</DropdownMenuItem>
+          <DropdownMenuItem>
+            Perfil
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Facturación
+          </DropdownMenuItem>
+          <Link href="/ajustes">
+            <DropdownMenuItem>
+              Ajustes
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Cerrar sesión</DropdownMenuItem>
