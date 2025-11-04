@@ -28,14 +28,17 @@ import {
 } from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 
 const transactionFormSchema = z.object({
   type: z.enum(['income', 'expense'], {
     required_error: 'El tipo es requerido.',
   }),
   amount: z.coerce.number().positive({ message: 'El monto debe ser positivo.' }),
+  description: z.string().min(1, { message: 'La descripción es requerida.' }),
   category: z.string({ required_error: 'La categoría es requerida.' }),
   date: z.string({ required_error: 'La fecha es requerida.' }),
 });
@@ -43,6 +46,8 @@ const transactionFormSchema = z.object({
 type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 
 export function AddTransactionDialog() {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
@@ -50,13 +55,30 @@ export function AddTransactionDialog() {
     },
   });
 
-  function onSubmit(data: TransactionFormValues) {
-    console.log(data);
-    // Here you would handle form submission, e.g., call an API
+  async function onSubmit(data: TransactionFormValues) {
+    try {
+      const response = await fetch('/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        console.log('Transaction saved successfully!');
+        setOpen(false);
+        router.refresh();
+      } else {
+        console.error('Failed to save transaction');
+      }
+    } catch (error) {
+      console.error('Error saving transaction: ', error);
+    }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm" className="gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
@@ -106,6 +128,19 @@ export function AddTransactionDialog() {
                   <FormLabel>Monto</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="0.00" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descripción</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ej: Supermercado" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -26,9 +26,11 @@ export function MainSidebar() {
 
   const menuItems = [
     { href: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '#', icon: ArrowLeftRight, label: 'Transacciones' },
-    { href: '#', icon: Target, label: 'Presupuestos' },
-    { href: '#', icon: BarChart3, label: 'Reportes' },
+    { href: '/transacciones', icon: ArrowLeftRight, label: 'Transacciones' },
+    { href: '/presupuestos', icon: Target, label: 'Presupuestos' },
+    { href: '/reportes', icon: BarChart3, label: 'Reportes' },
+    { href: '/ajustes', icon: Settings, label: 'Ajustes' },
+    { href: '/ayuda', icon: CircleHelp, label: 'Ayuda' },
   ];
 
   return (
@@ -58,24 +60,6 @@ export function MainSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Ajustes">
-                <Link href="#">
-                    <Settings />
-                    <span>Ajustes</span>
-                </Link>
-            </SidebarMenuButton>
-           </SidebarMenuItem>
-           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Ayuda">
-                <Link href="#">
-                    <CircleHelp />
-                    <span>Ayuda</span>
-                </Link>
-            </SidebarMenuButton>
-           </SidebarMenuItem>
-        </SidebarMenu>
         <div className="p-2">
             <UserNav />
         </div>

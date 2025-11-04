@@ -1,21 +1,11 @@
-import type { Transaction, CategorySpending } from '@/lib/types';
-import {
-  ShoppingCart,
-  Utensils,
-  Home,
-  Car,
-  Heart,
-  Shirt,
-  Popcorn,
-  Gift,
-} from 'lucide-react';
+import type { Transaction, CategorySpending, Budget } from '@/lib/types';
 
 export const transactions: Transaction[] = [
   {
     id: '1',
     type: 'expense',
     category: 'Compras',
-    categoryIcon: ShoppingCart,
+    categoryIcon: 'ShoppingCart',
     description: 'Supermercado',
     amount: 75.6,
     date: '2024-07-22',
@@ -24,7 +14,7 @@ export const transactions: Transaction[] = [
     id: '2',
     type: 'expense',
     category: 'Restaurantes',
-    categoryIcon: Utensils,
+    categoryIcon: 'Utensils',
     description: 'Cena con amigos',
     amount: 45.0,
     date: '2024-07-21',
@@ -33,7 +23,7 @@ export const transactions: Transaction[] = [
     id: '3',
     type: 'expense',
     category: 'Vivienda',
-    categoryIcon: Home,
+    categoryIcon: 'Home',
     description: 'Alquiler',
     amount: 850.0,
     date: '2024-07-20',
@@ -42,7 +32,7 @@ export const transactions: Transaction[] = [
     id: '4',
     type: 'expense',
     category: 'Transporte',
-    categoryIcon: Car,
+    categoryIcon: 'Car',
     description: 'Gasolina',
     amount: 50.0,
     date: '2024-07-19',
@@ -51,7 +41,7 @@ export const transactions: Transaction[] = [
     id: '5',
     type: 'expense',
     category: 'Salud',
-    categoryIcon: Heart,
+    categoryIcon: 'Heart',
     description: 'Farmacia',
     amount: 25.3,
     date: '2024-07-18',
@@ -65,4 +55,27 @@ export const categorySpending: CategorySpending[] = [
   { name: 'Restaurantes', spent: 220, fill: 'var(--color-chart-4)' },
   { name: 'Ocio', spent: 180, fill: 'var(--color-chart-5)' },
   { name: 'Otros', spent: 150, fill: 'hsl(var(--muted-foreground))' },
+];
+
+export const budgets: Budget[] = [
+  {
+    category: 'Vivienda',
+    limit: 1000,
+    spent: 950,
+  },
+  {
+    category: 'Comida',
+    limit: 500,
+    spent: 430,
+  },
+  {
+    category: 'Transporte',
+    limit: 300,
+    spent: 280,
+  },
+  {
+    category: 'Entretenimiento',
+    limit: 200,
+    spent: 220,
+  },
 ];
