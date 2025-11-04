@@ -23,7 +23,13 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
-export function Header({ title }: { title: string }) {
+export function Header({
+  title,
+  actions,
+}: {
+  title: string;
+  actions?: React.ReactNode;
+}) {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <ClientOnly>
@@ -81,7 +87,7 @@ export function Header({ title }: { title: string }) {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="#">Dashboard</Link>
+                <Link href="/">Dashboard</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -92,10 +98,7 @@ export function Header({ title }: { title: string }) {
         </Breadcrumb>
       </div>
       <div className="ml-auto flex items-center gap-2">
-        <Button variant="outline" size="sm">
-          <Download className="mr-2 h-4 w-4" />
-          Exportar
-        </Button>
+        {actions}
         <AddTransactionDialog />
         <ClientOnly>
           <UserNav />

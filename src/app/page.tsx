@@ -6,13 +6,24 @@ import { DollarSign, Wallet, PiggyBank, ArrowUp, ArrowDown } from 'lucide-react'
 import SpendingChart from '@/components/dashboard/spending-chart';
 import RecentTransactions from '@/components/dashboard/recent-transactions';
 import BudgetAlerts from '@/components/dashboard/budget-alerts';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
+import { AddTransactionDialog } from '@/components/dashboard/add-transaction-dialog';
 
 export default function DashboardPage() {
   return (
     <>
       <MainSidebar />
       <SidebarInset>
-        <Header />
+        <Header
+          title="Dashboard"
+          actions={
+            <Button variant="outline" size="sm">
+              <Download className="mr-2 h-4 w-4" />
+              Exportar
+            </Button>
+          }
+        />
         <main className="p-4 sm:px-6 sm:py-0">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatsCard
