@@ -9,12 +9,22 @@ import { useI18n } from '@/lib/i18n';
 import type { Transaction } from '@/lib/types';
 import { transactions as fallbackData } from '@/lib/data';
 
+const isApiKeyAvailable = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
 export default function BudgetAlerts() {
   const { t } = useI18n();
   const [budgetAnalysis, setBudgetAnalysis] = useState<{alert: boolean, message: string} | null>(null);
 
   useEffect(() => {
     async function getAnalysis() {
+      if (!isApiKeyAvailable) {
+        setBudgetAnalysis({
+          alert: false,
+          message: 'El análisis de presupuesto no está disponible. Falta la clave de API.',
+        });
+        return;
+      }
+
       try {
         const storedTransactions = localStorage.getItem('transactions');
         const allTransactions: Transaction[] = storedTransactions
@@ -72,7 +82,7 @@ export default function BudgetAlerts() {
           </Alert>
         ) : (
           <div className="text-sm text-muted-foreground">
-            {t('no_alerts')}
+            {budgetAnalysis.message || t('no_alerts')}
           </div>
         )}
       </CardContent>
