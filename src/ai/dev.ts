@@ -10,5 +10,5 @@ genkit({
   plugins: [googleAI()],
   model: 'googleai/gemini-2.5-flash',
   enableTracing: true,
-  logLevel: 'debug',
+  logLevel: 'info',
 });

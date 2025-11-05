@@ -9,6 +9,7 @@ import { useI18n } from '@/lib/i18n';
 import type { Transaction } from '@/lib/types';
 import { transactions as fallbackData } from '@/lib/data';
 
+// Check if the API key is configured on the client side.
 const isApiKeyConfigured = !!process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
 export default function BudgetAlerts() {
@@ -18,11 +19,8 @@ export default function BudgetAlerts() {
 
   useEffect(() => {
     async function getAnalysis() {
+      // Do not run analysis if the API key is not configured.
       if (!isApiKeyConfigured) {
-        setBudgetAnalysis({
-          alert: false,
-          message: 'El análisis de presupuesto no está disponible. Falta la clave de API.',
-        });
         setIsLoading(false);
         return;
       }
@@ -41,7 +39,7 @@ export default function BudgetAlerts() {
         if (spendingDataForCategory.length > 0) {
           const analysis = await analyzeSpendingAndAlert({
             category: 'Compras',
-            budget: 400, // Manteniendo el presupuesto de ejemplo por ahora
+            budget: 400, // Example budget
             spendingData: spendingDataForCategory,
           });
           setBudgetAnalysis(analysis);
@@ -64,13 +62,27 @@ export default function BudgetAlerts() {
 
     getAnalysis();
     
-    // Volver a analizar cuando cambien las transacciones
     const handleStorageChange = () => getAnalysis();
     window.addEventListener('storage', handleStorageChange);
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  if (!isApiKeyConfigured) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('budget_alerts')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="text-sm text-muted-foreground">
+                    El análisis de presupuesto no está disponible. Falta la clave de API.
+                </div>
+            </CardContent>
+        </Card>
+    );
+  }
 
   return (
     <Card>
