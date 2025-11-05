@@ -16,6 +16,7 @@ import { UserNav } from './user-nav';
 import { ClientOnly } from '../client-only';
 import {
   Breadcrumb,
+  BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbPage,
