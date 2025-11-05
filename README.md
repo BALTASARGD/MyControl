@@ -1,3 +1,4 @@
+'''
 # MiControl: Your Personal Finance Assistant
 
 **MiControl** is a personal finance web application designed to help you take control of your money in a simple and intuitive way. Built with modern technologies like Next.js, React, and Tailwind CSS, this tool allows you to:
@@ -21,3 +22,4 @@ All information is stored securely in your browser's local storage, ensuring you
 -   **Exportar** tus datos a PDF.
 
 Toda la información se almacena de forma segura en el almacenamiento local de tu navegador, garantizando que tus datos financieros sean siempre privados y accesibles solo para ti.
+'''
