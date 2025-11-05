@@ -6,6 +6,8 @@ import { AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { analyzeSpendingAndAlert } from '@/ai/flows/budget-alerts';
 import { useI18n } from '@/lib/i18n';
+import type { Transaction } from '@/lib/types';
+import { transactions as fallbackData } from '@/lib/data';
 
 export default function BudgetAlerts() {
   const { t } = useI18n();
@@ -13,21 +15,29 @@ export default function BudgetAlerts() {
 
   useEffect(() => {
     async function getAnalysis() {
-      const spendingData = [
-        { date: '2024-07-01', amount: 30.5 },
-        { date: '2024-07-05', amount: 85.2 },
-        { date: '2024-07-10', amount: 42.0 },
-        { date: '2024-07-15', amount: 95.7 },
-        { date: '2024-07-22', amount: 75.6 },
-      ];
-
       try {
-        const analysis = await analyzeSpendingAndAlert({
-          category: 'Compras',
-          budget: 400,
-          spendingData: spendingData,
-        });
-        setBudgetAnalysis(analysis);
+        const storedTransactions = localStorage.getItem('transactions');
+        const allTransactions: Transaction[] = storedTransactions
+          ? JSON.parse(storedTransactions)
+          : fallbackData;
+
+        const spendingDataForCategory = allTransactions
+          .filter(t => t.category === 'Compras' && t.type === 'expense')
+          .map(t => ({ date: t.date, amount: t.amount }));
+
+        if (spendingDataForCategory.length > 0) {
+          const analysis = await analyzeSpendingAndAlert({
+            category: 'Compras',
+            budget: 400, // Manteniendo el presupuesto de ejemplo por ahora
+            spendingData: spendingDataForCategory,
+          });
+          setBudgetAnalysis(analysis);
+        } else {
+          setBudgetAnalysis({
+            alert: false,
+            message: 'No hay gastos en la categoría Compras para analizar.',
+          });
+        }
       } catch (error) {
         console.error("Error analyzing budget:", error);
         setBudgetAnalysis({
@@ -38,6 +48,12 @@ export default function BudgetAlerts() {
     }
 
     getAnalysis();
+    
+    // Volver a analizar cuando cambien las transacciones
+    window.addEventListener('storage', getAnalysis);
+    return () => {
+      window.removeEventListener('storage', getAnalysis);
+    };
   }, []);
 
   return (
