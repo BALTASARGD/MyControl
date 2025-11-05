@@ -22,8 +22,9 @@ import {
   LucideIcon,
   HelpCircle,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { useAuth } from '@/lib/auth';
 
 const categoryIconMap: Record<string, LucideIcon> = {
   compras: ShoppingCart,
@@ -37,14 +38,18 @@ const categoryIconMap: Record<string, LucideIcon> = {
 
 export default function RecentTransactions() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  
+  const transactionsKey = useMemo(() => user ? `transactions_${user.email}` : null, [user]);
 
   const loadData = () => {
+    if (!transactionsKey) return;
     try {
-      const storedTransactions = localStorage.getItem('transactions');
+      const storedTransactions = localStorage.getItem(transactionsKey);
       const allTransactions = storedTransactions
         ? JSON.parse(storedTransactions)
-        : fallbackData;
+        : [];
       
       // Ordenamos por fecha y tomamos las últimas 5
       const recent = allTransactions
@@ -54,18 +59,26 @@ export default function RecentTransactions() {
       setTransactions(recent);
     } catch (error) {
       console.error('Error loading recent transactions:', error);
-      setTransactions(fallbackData.slice(0, 5));
+      setTransactions([]);
     }
   };
 
   useEffect(() => {
-    loadData();
-    const handleStorageChange = () => loadData();
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+    if (transactionsKey) {
+        loadData();
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === transactionsKey) {
+                loadData();
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+          window.removeEventListener('storage', handleStorageChange);
+        };
+    } else {
+        setTransactions([]);
+    }
+  }, [transactionsKey]);
 
   return (
     <Card>
@@ -84,7 +97,7 @@ export default function RecentTransactions() {
         </Button>
       </CardHeader>
       <CardContent className="grid gap-4">
-        {transactions.map((transaction) => {
+        {transactions.length > 0 ? transactions.map((transaction) => {
           const Icon = categoryIconMap[transaction.category.toLowerCase()] || HelpCircle;
           return (
             <div key={transaction.id} className="flex items-center gap-4">
@@ -112,7 +125,9 @@ export default function RecentTransactions() {
               </div>
             </div>
           );
-        })}
+        }) : (
+          <p className="text-sm text-muted-foreground">{t('no_results')}</p>
+        )}
       </CardContent>
     </Card>
   );

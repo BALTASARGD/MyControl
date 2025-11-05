@@ -20,6 +20,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const { t } = useI18n();
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
+  
+  const transactionsKey = useMemo(() => user ? `transactions_${user.email}` : null, [user]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -28,12 +30,13 @@ export default function DashboardPage() {
   }, [user, loading, router]);
   
   const loadTransactions = () => {
+    if (!transactionsKey) return;
     try {
-      const stored = localStorage.getItem('transactions');
+      const stored = localStorage.getItem(transactionsKey);
       if (stored) {
         setAllTransactions(JSON.parse(stored));
       } else {
-        localStorage.setItem('transactions', JSON.stringify(fallbackData));
+        localStorage.setItem(transactionsKey, JSON.stringify(fallbackData));
         setAllTransactions(fallbackData);
       }
     } catch (error) {
@@ -43,12 +46,21 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    loadTransactions();
-    window.addEventListener('storage', loadTransactions);
-    return () => {
-      window.removeEventListener('storage', loadTransactions);
-    };
-  }, []);
+    if (transactionsKey) {
+      loadTransactions();
+      const handleStorageChange = (e: StorageEvent) => {
+        if (e.key === transactionsKey) {
+          loadTransactions();
+        }
+      };
+      window.addEventListener('storage', handleStorageChange);
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+      };
+    } else {
+        setAllTransactions([]);
+    }
+  }, [transactionsKey]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-ES', {

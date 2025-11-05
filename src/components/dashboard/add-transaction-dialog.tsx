@@ -34,6 +34,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import type { Transaction } from '@/lib/types';
 import { useI18n } from '@/lib/i18n';
+import { useAuth } from '@/lib/auth';
 
 const transactionFormSchema = z.object({
   type: z.enum(['income', 'expense'], {
@@ -51,6 +52,7 @@ export function AddTransactionDialog() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { t } = useI18n();
+  const { user } = useAuth();
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
@@ -66,24 +68,29 @@ export function AddTransactionDialog() {
   const transactionType = form.watch('type');
 
   async function onSubmit(data: TransactionFormValues) {
+    if (!user) {
+        console.error("No user logged in to save transaction");
+        return;
+    }
     try {
+      const transactionsKey = `transactions_${user.email}`;
       const existingTransactions: Transaction[] = JSON.parse(
-        localStorage.getItem('transactions') || '[]'
+        localStorage.getItem(transactionsKey) || '[]'
       );
       const newTransaction: Transaction = {
         ...data,
-        id: new Date().toISOString(),
+        id: new Date().toISOString() + Math.random(), // Make ID more unique
       };
       const updatedTransactions = [...existingTransactions, newTransaction];
       localStorage.setItem(
-        'transactions',
+        transactionsKey,
         JSON.stringify(updatedTransactions)
       );
 
       console.log('Transaction saved successfully!');
       setOpen(false);
       // Disparar un evento para que otras partes de la app sepan que se actualizaron las transacciones
-      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new StorageEvent('storage', { key: transactionsKey }));
       router.refresh();
       form.reset({
         type: 'expense',

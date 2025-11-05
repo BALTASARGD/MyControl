@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -24,17 +24,20 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Header } from '@/components/dashboard/header';
 import { useI18n } from '@/lib/i18n';
+import { useAuth } from '@/lib/auth';
 
 export default function AjustesPage() {
   const { t } = useI18n();
   const { setTheme, theme } = useTheme();
+  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const transactionsKey = useMemo(() => user ? `transactions_${user.email}` : null, [user]);
+
   const handleDeleteData = () => {
-    // This code runs only on the client side
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('transactions');
-      window.dispatchEvent(new Event('storage'));
+    if (typeof window !== 'undefined' && transactionsKey) {
+      localStorage.removeItem(transactionsKey);
+      window.dispatchEvent(new StorageEvent('storage', { key: transactionsKey }));
     }
     setIsDialogOpen(false);
   };
@@ -71,7 +74,7 @@ export default function AjustesPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="destructive" onClick={() => setIsDialogOpen(true)}>
+              <Button variant="destructive" onClick={() => setIsDialogOpen(true)} disabled={!user}>
                 {t('delete_all_transactions')}
               </Button>
               <p className="text-sm text-muted-foreground mt-2">

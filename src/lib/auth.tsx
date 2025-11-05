@@ -19,19 +19,28 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const LAST_LOGGED_IN_USER_KEY = 'lastLoggedInUser';
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      const lastUserEmail = localStorage.getItem(LAST_LOGGED_IN_USER_KEY);
+      if (lastUserEmail) {
+        const storedUser = localStorage.getItem(`user_${lastUserEmail}`);
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
       }
     } catch (error) {
       console.error('Failed to parse user from localStorage', error);
-      localStorage.removeItem('user');
+      // Clear potentially corrupted keys
+      localStorage.removeItem(LAST_LOGGED_IN_USER_KEY);
+      if (user?.email) {
+        localStorage.removeItem(`user_${user.email}`);
+      }
     }
     setLoading(false);
   }, []);
@@ -39,20 +48,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (name: string, email: string) => {
     const defaultAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
     const userData = { name, email, avatarUrl: defaultAvatar?.imageUrl || '' };
-    localStorage.setItem('user', JSON.stringify(userData));
+    const userKey = `user_${email}`;
+    
+    localStorage.setItem(userKey, JSON.stringify(userData));
+    localStorage.setItem(LAST_LOGGED_IN_USER_KEY, email);
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem(LAST_LOGGED_IN_USER_KEY);
+    // No es necesario eliminar la clave `user_...`, puede permanecer para un futuro inicio de sesión.
     setUser(null);
   };
   
   const updateUser = (data: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...data };
+      const userKey = `user_${user.email}`;
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem(userKey, JSON.stringify(updatedUser));
     }
   };
 

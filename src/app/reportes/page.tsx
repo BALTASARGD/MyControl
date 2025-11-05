@@ -7,35 +7,47 @@ import { DollarSign, Wallet, PiggyBank } from 'lucide-react';
 import SpendingChart from '@/components/dashboard/spending-chart';
 import { useI18n } from '@/lib/i18n';
 import type { Transaction } from '@/lib/types';
-import { transactions as fallbackData } from '@/lib/data';
+import { useAuth } from '@/lib/auth';
 import { isSameMonth, parseISO } from 'date-fns';
 
 export default function ReportesPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
+
+  const transactionsKey = useMemo(() => user ? `transactions_${user.email}` : null, [user]);
 
   useEffect(() => {
     const loadTransactions = () => {
+      if (!transactionsKey) return;
       try {
-        const stored = localStorage.getItem('transactions');
+        const stored = localStorage.getItem(transactionsKey);
         if (stored) {
           setAllTransactions(JSON.parse(stored));
         } else {
-          localStorage.setItem('transactions', JSON.stringify(fallbackData));
-          setAllTransactions(fallbackData);
+          setAllTransactions([]);
         }
       } catch (error) {
         console.error("Failed to load transactions", error);
-        setAllTransactions(fallbackData);
+        setAllTransactions([]);
       }
     };
     
-    loadTransactions();
-    window.addEventListener('storage', loadTransactions);
-    return () => {
-      window.removeEventListener('storage', loadTransactions);
-    };
-  }, []);
+    if (transactionsKey) {
+        loadTransactions();
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === transactionsKey) {
+                loadTransactions();
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+          window.removeEventListener('storage', handleStorageChange);
+        };
+    } else {
+        setAllTransactions([]);
+    }
+  }, [transactionsKey]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-ES', {
