@@ -5,6 +5,8 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/lib/auth';
 import { I18nProvider } from '@/lib/i18n';
+import BackButton from '@/components/back-button';
+import { MainSidebar } from '@/components/dashboard/main-sidebar';
 
 export const metadata: Metadata = {
   title: 'MiControl',
@@ -33,6 +35,8 @@ export default function RootLayout({
                 disableTransitionOnChange
             >
                 <SidebarProvider>
+                  <MainSidebar />
+                  <BackButton />
                   {children}
                 </SidebarProvider>
                 <Toaster />

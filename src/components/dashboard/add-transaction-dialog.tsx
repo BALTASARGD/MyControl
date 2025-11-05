@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -37,18 +37,16 @@ import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/auth';
 
 const transactionFormSchema = z.object({
-  type: z.enum(['income', 'expense'], {
-    required_error: 'El tipo es requerido.',
-  }),
+  type: z.enum(['income', 'expense']),
   amount: z.coerce.number().positive({ message: 'El monto debe ser positivo.' }),
   description: z.string().min(1, { message: 'La descripción es requerida.' }),
-  category: z.string().min(1, { required_error: 'La categoría es requerida.' }),
-  date: z.string({ required_error: 'La fecha es requerida.' }),
+  category: z.string().min(1, { message: 'La categoría es requerida.' }),
+  date: z.string().min(1, { message: 'La fecha es requerida.' }),
 });
 
 type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 
-export function AddTransactionDialog() {
+export function AddTransactionDialog({ trigger, children, initialValues }: { trigger?: React.ReactNode; children?: React.ReactNode; initialValues?: Partial<TransactionFormValues> }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { t } = useI18n();
@@ -64,6 +62,20 @@ export function AddTransactionDialog() {
       date: new Date().toISOString().split('T')[0],
     },
   });
+
+  // When dialog opens, if initialValues are provided, reset the form with them
+  useEffect(() => {
+    if (open && initialValues) {
+      form.reset({
+        type: initialValues.type ?? form.getValues('type'),
+        amount: initialValues.amount ?? undefined,
+        description: initialValues.description ?? '',
+        category: initialValues.category ?? '',
+        date: initialValues.date ?? new Date().toISOString().split('T')[0],
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const transactionType = form.watch('type');
 
@@ -106,14 +118,20 @@ export function AddTransactionDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" className="gap-1">
-          <PlusCircle className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            {t('add')}
-          </span>
-        </Button>
-      </DialogTrigger>
+      {trigger ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : children ? (
+        <DialogTrigger asChild>{children}</DialogTrigger>
+      ) : (
+        <DialogTrigger asChild>
+          <Button size="sm" className="gap-1">
+            <PlusCircle className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              {t('add')}
+            </span>
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t('add_transaction')}</DialogTitle>
