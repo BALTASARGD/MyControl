@@ -56,6 +56,9 @@ export function AddTransactionDialog() {
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
       type: 'expense',
+      amount: undefined,
+      description: '',
+      category: '',
       date: new Date().toISOString().split('T')[0],
     },
   });
@@ -136,7 +139,7 @@ export function AddTransactionDialog() {
                 <FormItem>
                   <FormLabel>{t('amount')}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder={t('amount_placeholder')} {...field} step="0.01" />
+                    <Input type="number" placeholder={t('amount_placeholder')} {...field} step="0.01" value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
