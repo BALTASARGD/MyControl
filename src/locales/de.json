@@ -91,5 +91,11 @@
   "faq_4_q": "Wie kann ich das Anwendungsthema ändern?",
   "faq_4_a": "Gehen Sie zur Seite \"Einstellungen\". Dort finden Sie einen Abschnitt \"Erscheinungsbild\" mit einem Schalter, um zwischen dem hellen und dem dunklen Thema zu wechseln.",
   "faq_5_q": "Was mache ich, wenn ich alle meine Daten löschen möchte?",
-  "faq_5_a": "Auf der Seite \"Einstellungen\" unter \"Datenverwaltung\" gibt es eine Schaltfläche, um \"Alle Transaktionen zu löschen\". Beachten Sie, dass diese Aktion unumkehrbar ist und alle Daten aus Ihrem Browser löscht."
+  "faq_5_a": "Auf der Seite \"Einstellungen\" unter \"Datenverwaltung\" gibt es eine Schaltfläche, um \"Alle Transaktionen zu löschen\". Beachten Sie, dass diese Aktion unumkehrbar ist und alle Daten aus Ihrem Browser löscht.",
+  "add_budget": "Budget hinzufügen",
+  "create_new_budget": "Erstellen Sie ein neues Budget für eine Kategorie.",
+  "limit": "Limit",
+  "limit_placeholder": "z.B. 500",
+  "no_budgets_yet": "Sie haben noch keine Budgets",
+  "create_first_budget": "Erstellen Sie Ihr erstes Budget, um Ihre Ausgaben zu verfolgen."
 }

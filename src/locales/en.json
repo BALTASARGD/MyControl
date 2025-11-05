@@ -91,5 +91,11 @@
   "faq_4_q": "How can I change the application theme?",
   "faq_4_a": "Go to the \"Settings\" page. There you will find an \"Appearance\" section with a switch to change between the light and dark theme.",
   "faq_5_q": "What if I want to delete all my data?",
-  "faq_5_a": "On the \"Settings\" page, under \"Data Management\", there is a button to \"Delete all transactions\". Please note that this action is irreversible and will delete all data from your browser."
+  "faq_5_a": "On the \"Settings\" page, under \"Data Management\", there is a button to \"Delete all transactions\". Please note that this action is irreversible and will delete all data from your browser.",
+  "add_budget": "Add Budget",
+  "create_new_budget": "Create a new budget for a category.",
+  "limit": "Limit",
+  "limit_placeholder": "e.g. 500",
+  "no_budgets_yet": "You don't have any budgets yet",
+  "create_first_budget": "Create your first budget to start tracking your expenses."
 }

@@ -60,25 +60,4 @@ export const categorySpending: CategorySpending[] = [
   { name: 'Otros', spent: 150, fill: 'hsl(var(--muted-foreground))' },
 ];
 
-export const budgets: Budget[] = [
-  {
-    category: 'Vivienda',
-    limit: 1000,
-    spent: 950,
-  },
-  {
-    category: 'Comida',
-    limit: 500,
-    spent: 430,
-  },
-  {
-    category: 'Transporte',
-    limit: 300,
-    spent: 280,
-  },
-  {
-    category: 'Entretenimiento',
-    limit: 200,
-    spent: 220,
-  },
-];
+export const budgets: Budget[] = [];

@@ -91,5 +91,11 @@
   "faq_4_q": "¿Cómo puedo cambiar el tema de la aplicación?",
   "faq_4_a": "Ve a la página de \"Ajustes\". Allí encontrarás una sección de \"Apariencia\" con un interruptor para cambiar entre el tema claro y el oscuro.",
   "faq_5_q": "¿Qué hago si quiero borrar todos mis datos?",
-  "faq_5_a": "En la página de \"Ajustes\", dentro de \"Gestión de Datos\", hay un botón para \"Borrar todas las transacciones\". Ten en cuenta que esta acción es irreversible y eliminará todos los datos de tu navegador."
+  "faq_5_a": "En la página de \"Ajustes\", dentro de \"Gestión de Datos\", hay un botón para \"Borrar todas las transacciones\". Ten en cuenta que esta acción es irreversible y eliminará todos los datos de tu navegador.",
+  "add_budget": "Añadir Presupuesto",
+  "create_new_budget": "Crea un nuevo presupuesto para una categoría.",
+  "limit": "Límite",
+  "limit_placeholder": "Ej: 500",
+  "no_budgets_yet": "Aún no tienes presupuestos",
+  "create_first_budget": "Crea tu primer presupuesto para empezar a controlar tus gastos."
 }
