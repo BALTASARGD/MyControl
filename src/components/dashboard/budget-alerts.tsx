@@ -14,7 +14,7 @@ const isApiKeyConfigured = !!process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 export default function BudgetAlerts() {
   const { t } = useI18n();
   const [budgetAnalysis, setBudgetAnalysis] = useState<{alert: boolean, message: string} | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(isApiKeyConfigured); // Only show loading if key is configured
 
   useEffect(() => {
     async function getAnalysis() {
@@ -27,6 +27,7 @@ export default function BudgetAlerts() {
         return;
       }
 
+      setIsLoading(true);
       try {
         const storedTransactions = localStorage.getItem('transactions');
         const allTransactions: Transaction[] = storedTransactions
