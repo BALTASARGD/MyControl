@@ -9,19 +9,21 @@ import { useI18n } from '@/lib/i18n';
 import type { Transaction } from '@/lib/types';
 import { transactions as fallbackData } from '@/lib/data';
 
-const isApiKeyAvailable = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const isApiKeyConfigured = !!process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
 export default function BudgetAlerts() {
   const { t } = useI18n();
   const [budgetAnalysis, setBudgetAnalysis] = useState<{alert: boolean, message: string} | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function getAnalysis() {
-      if (!isApiKeyAvailable) {
+      if (!isApiKeyConfigured) {
         setBudgetAnalysis({
           alert: false,
           message: 'El análisis de presupuesto no está disponible. Falta la clave de API.',
         });
+        setIsLoading(false);
         return;
       }
 
@@ -52,17 +54,20 @@ export default function BudgetAlerts() {
         console.error("Error analyzing budget:", error);
         setBudgetAnalysis({
           alert: true,
-          message: 'Could not analyze budget. Check console for details.',
+          message: 'No se pudo analizar el presupuesto. Revisa la consola para más detalles.',
         });
+      } finally {
+        setIsLoading(false);
       }
     }
 
     getAnalysis();
     
     // Volver a analizar cuando cambien las transacciones
-    window.addEventListener('storage', getAnalysis);
+    const handleStorageChange = () => getAnalysis();
+    window.addEventListener('storage', handleStorageChange);
     return () => {
-      window.removeEventListener('storage', getAnalysis);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
@@ -72,9 +77,9 @@ export default function BudgetAlerts() {
         <CardTitle>{t('budget_alerts')}</CardTitle>
       </CardHeader>
       <CardContent>
-        {!budgetAnalysis ? (
+        {isLoading ? (
           <div className="text-sm text-muted-foreground">{t('analyzing')}...</div>
-        ) : budgetAnalysis.alert ? (
+        ) : budgetAnalysis?.alert ? (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>{t('attention')}!</AlertTitle>
@@ -82,7 +87,7 @@ export default function BudgetAlerts() {
           </Alert>
         ) : (
           <div className="text-sm text-muted-foreground">
-            {budgetAnalysis.message || t('no_alerts')}
+            {budgetAnalysis?.message || t('no_alerts')}
           </div>
         )}
       </CardContent>
