@@ -28,8 +28,10 @@ export default function PresupuestosPage() {
     if (!budgetsKey || !transactionsKey) return;
 
     try {
-      const storedBudgets: StoredBudget[] = JSON.parse(localStorage.getItem(budgetsKey) || '[]');
-      const allTransactions: Transaction[] = JSON.parse(localStorage.getItem(transactionsKey) || '[]');
+      const storedBudgets: StoredBudget[] = JSON.parse(localStorage.getItem(budgetsKey) || '[]'
+      );
+      const allTransactions: Transaction[] = JSON.parse(localStorage.getItem(transactionsKey) || '[]'
+      );
       
       const now = new Date();
       const currentMonth = getMonth(now);

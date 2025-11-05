@@ -1,3 +1,4 @@
+'use client';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -27,10 +28,12 @@ import { LanguageSwitcher } from './language-switcher';
 
 export function Header({
   title,
+  subtitle,
   actions,
   showAddButton,
 }: {
   title: string;
+  subtitle?: string;
   actions?: React.ReactNode;
   showAddButton?: boolean;
 }) {
@@ -84,23 +87,15 @@ export function Header({
         </Sheet>
       </ClientOnly>
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" className="h-7 w-7">
+        {/* Este botón de "atrás" no tiene funcionalidad real por ahora */}
+        {/* <Button variant="outline" size="icon" className="h-7 w-7">
           <ChevronLeft className="h-4 w-4" />
           <span className="sr-only">{t('back')}</span>
-        </Button>
-        <Breadcrumb className="hidden md:flex">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/">{t('dashboard')}</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{title}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        </Button> */}
+        <div className="flex flex-col">
+            <h1 className="text-xl font-semibold">{title}</h1>
+            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+        </div>
       </div>
       <div className="ml-auto flex items-center gap-2">
         {actions}

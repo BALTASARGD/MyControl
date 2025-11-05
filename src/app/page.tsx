@@ -125,6 +125,7 @@ export default function DashboardPage() {
       <SidebarInset>
         <Header
           title={t('dashboard')}
+          subtitle={`Hola de nuevo, ${user.name}`}
         />
         <main className="p-4 sm:px-6 sm:py-0">
           {user.isGuest && (
