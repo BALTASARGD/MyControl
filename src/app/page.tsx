@@ -49,7 +49,7 @@ export default function DashboardPage() {
     if (transactionsKey) {
       loadTransactions();
       const handleStorageChange = (e: StorageEvent) => {
-        if (e.key === transactionsKey) {
+        if (e.key === transactionsKey || e.key === null) { // e.key is null for localStorage.clear()
           loadTransactions();
         }
       };
@@ -127,6 +127,12 @@ export default function DashboardPage() {
           title={t('dashboard')}
         />
         <main className="p-4 sm:px-6 sm:py-0">
+          {user.isGuest && (
+             <div className="bg-primary/10 border-l-4 border-primary text-primary-foreground p-4 mb-6 rounded-md" role="alert">
+                <p className="font-bold">Modo Invitado</p>
+                <p>Estás usando una cuenta de invitado. Los datos se borrarán al cerrar sesión.</p>
+            </div>
+          )}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatsCard
               title={t('income')}

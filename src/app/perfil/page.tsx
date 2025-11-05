@@ -26,6 +26,9 @@ export default function PerfilPage() {
   const [avatarUrl, setAvatarUrl] = useState('');
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const isGuest = user?.isGuest || false;
+
 
   useEffect(() => {
     if (user) {
@@ -37,6 +40,7 @@ export default function PerfilPage() {
 
   const handleProfileSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isGuest) return;
     updateUser({ name, email });
     toast({
       title: t('profile_updated'),
@@ -46,6 +50,7 @@ export default function PerfilPage() {
 
   const handlePasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isGuest) return;
     // En una app real, aquí iría la lógica para cambiar la contraseña
     toast({
       title: t('password_updated'),
@@ -54,10 +59,12 @@ export default function PerfilPage() {
   };
   
   const handleChangePhotoClick = () => {
+    if (isGuest) return;
     fileInputRef.current?.click();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isGuest) return;
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -89,6 +96,16 @@ export default function PerfilPage() {
       <Header title={t('profile')} />
       <div className="p-4 sm:p-6">
         <div className="max-w-2xl grid gap-6">
+          {isGuest && (
+            <Card className="bg-yellow-50 border-yellow-300">
+                <CardHeader>
+                    <CardTitle>Modo Invitado</CardTitle>
+                    <CardDescription>
+                        Las funciones de edición de perfil están desactivadas en el modo de invitado. Inicia sesión para guardar tus cambios.
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+          )}
           <Card>
             <form onSubmit={handleProfileSubmit}>
               <CardHeader>
@@ -103,7 +120,7 @@ export default function PerfilPage() {
                     <AvatarImage src={avatarUrl} alt="User avatar" />
                     <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
-                  <Button type="button" variant="outline" size="sm" onClick={handleChangePhotoClick}>
+                  <Button type="button" variant="outline" size="sm" onClick={handleChangePhotoClick} disabled={isGuest}>
                     {t('change_photo')}
                   </Button>
                   <input
@@ -112,6 +129,7 @@ export default function PerfilPage() {
                     onChange={handleFileChange}
                     accept="image/*"
                     style={{ display: 'none' }}
+                    disabled={isGuest}
                   />
                 </div>
                 <div className="space-y-2">
@@ -121,6 +139,7 @@ export default function PerfilPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
+                    disabled={isGuest}
                   />
                 </div>
                 <div className="space-y-2">
@@ -131,11 +150,12 @@ export default function PerfilPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isGuest}
                   />
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit">{t('save_changes')}</Button>
+                <Button type="submit" disabled={isGuest}>{t('save_changes')}</Button>
               </CardFooter>
             </form>
           </Card>
@@ -151,15 +171,15 @@ export default function PerfilPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="current-password">{t('current_password')}</Label>
-                  <Input id="current-password" type="password" />
+                  <Input id="current-password" type="password" disabled={isGuest} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="new-password">{t('new_password')}</Label>
-                  <Input id="new-password" type="password" />
+                  <Input id="new-password" type="password" disabled={isGuest} />
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit">{t('change_password')}</Button>
+                <Button type="submit" disabled={isGuest}>{t('change_password')}</Button>
               </CardFooter>
             </form>
           </Card>

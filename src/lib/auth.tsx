@@ -2,17 +2,22 @@
 
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { transactions as fallbackData } from '@/lib/data';
 
 interface User {
   name: string;
   email: string;
   avatarUrl: string;
+  password?: string; // Should be hashed in a real app
+  isGuest?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (name: string, email: string) => void;
+  login: (email: string, password?: string) => void;
+  register: (name: string, email: string, password?: string) => void;
+  loginAsGuest: () => void;
   logout: () => void;
   updateUser: (data: Partial<User>) => void;
 }
@@ -36,7 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Failed to parse user from localStorage', error);
-      // Clear potentially corrupted keys
       localStorage.removeItem(LAST_LOGGED_IN_USER_KEY);
       if (user?.email) {
         localStorage.removeItem(`user_${user.email}`);
@@ -44,33 +48,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setLoading(false);
   }, []);
-
-  const login = (name: string, email: string) => {
+  
+  const register = (name: string, email: string, password?: string) => {
     const userKey = `user_${email}`;
     const existingUser = localStorage.getItem(userKey);
 
     if (existingUser) {
-      // Si el usuario ya existe, simplemente lo cargamos
-      setUser(JSON.parse(existingUser));
-    } else {
-      // Si es un usuario nuevo, creamos su perfil con un avatar por defecto
-      const defaultAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
-      const userData = { name, email, avatarUrl: defaultAvatar?.imageUrl || '' };
-      localStorage.setItem(userKey, JSON.stringify(userData));
-      setUser(userData);
+      throw new Error('Ya existe una cuenta con este correo electrónico.');
+    }
+
+    const defaultAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
+    const userData: User = { name, email, avatarUrl: defaultAvatar?.imageUrl || '', password, isGuest: false };
+    localStorage.setItem(userKey, JSON.stringify(userData));
+    
+    // Set initial transactions for the new user
+    const transactionsKey = `transactions_${email}`;
+    localStorage.setItem(transactionsKey, JSON.stringify(fallbackData));
+  };
+
+
+  const login = (email: string, password?: string) => {
+    const userKey = `user_${email}`;
+    const storedUser = localStorage.getItem(userKey);
+
+    if (!storedUser) {
+        throw new Error('El usuario no existe. Por favor, regístrese.');
     }
     
+    const userData: User = JSON.parse(storedUser);
+
+    if (userData.password !== password) {
+        throw new Error('La contraseña es incorrecta.');
+    }
+    
+    setUser(userData);
     localStorage.setItem(LAST_LOGGED_IN_USER_KEY, email);
+  };
+  
+  const loginAsGuest = () => {
+    const guestEmail = `guest_${new Date().getTime()}@micontrol.com`;
+    const guestUser: User = {
+        name: 'Invitado',
+        email: guestEmail,
+        avatarUrl: '',
+        isGuest: true,
+    };
+    setUser(guestUser);
+    localStorage.setItem(LAST_LOGGED_IN_USER_KEY, guestEmail);
+    localStorage.setItem(`user_${guestEmail}`, JSON.stringify(guestUser));
+    
+    // Set initial transactions for the guest user
+    const transactionsKey = `transactions_${guestEmail}`;
+    localStorage.setItem(transactionsKey, JSON.stringify(fallbackData));
   };
 
   const logout = () => {
+    if (user?.isGuest) {
+      // Clean up guest data
+      localStorage.removeItem(`user_${user.email}`);
+      localStorage.removeItem(`transactions_${user.email}`);
+      localStorage.removeItem(`budgets_${user.email}`);
+    }
     localStorage.removeItem(LAST_LOGGED_IN_USER_KEY);
-    // No es necesario eliminar la clave `user_...`, puede permanecer para un futuro inicio de sesión.
     setUser(null);
   };
   
   const updateUser = (data: Partial<User>) => {
-    if (user) {
+    if (user && !user.isGuest) {
       const updatedUser = { ...user, ...data };
       const userKey = `user_${user.email}`;
       setUser(updatedUser);
@@ -79,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, loginAsGuest, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
