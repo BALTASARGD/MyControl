@@ -97,5 +97,7 @@
   "limit": "Límite",
   "limit_placeholder": "Ej: 500",
   "no_budgets_yet": "Aún no tienes presupuestos",
-  "create_first_budget": "Crea tu primer presupuesto para empezar a controlar tus gastos."
+  "create_first_budget": "Crea tu primer presupuesto para empezar a controlar tus gastos.",
+  "edit_budget": "Editar Presupuesto",
+  "update_budget_details": "Actualiza los detalles de tu presupuesto."
 }

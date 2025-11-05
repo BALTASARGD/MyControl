@@ -97,5 +97,7 @@
   "limit": "Limit",
   "limit_placeholder": "e.g. 500",
   "no_budgets_yet": "You don't have any budgets yet",
-  "create_first_budget": "Create your first budget to start tracking your expenses."
+  "create_first_budget": "Create your first budget to start tracking your expenses.",
+  "edit_budget": "Edit Budget",
+  "update_budget_details": "Update the details of your budget."
 }

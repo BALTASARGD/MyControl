@@ -8,6 +8,8 @@ import { useAuth } from '@/lib/auth';
 import type { Budget, Transaction } from '@/lib/types';
 import { AddBudgetDialog } from './add-budget-dialog';
 import { getMonth, getYear, parseISO } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
 
 interface StoredBudget {
   category: string;
@@ -71,10 +73,21 @@ export default function PresupuestosPage() {
         setBudgets([]);
     }
   }, [user, budgetsKey, transactionsKey]);
+  
+  const addBudgetButton = (
+    <AddBudgetDialog>
+        <Button size="sm" className="gap-1">
+          <PlusCircle className="h-3.5 w-3.5" />
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+            {t('add_budget')}
+          </span>
+        </Button>
+    </AddBudgetDialog>
+  );
 
   return (
     <main>
-      <Header title={t('budgets')} actions={<AddBudgetDialog />} />
+      <Header title={t('budgets')} actions={addBudgetButton} />
       <div className="p-4 sm:p-6">
         {budgets.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -87,7 +100,7 @@ export default function PresupuestosPage() {
               <h3 className="text-xl font-semibold">{t('no_budgets_yet')}</h3>
               <p className="text-muted-foreground mt-2">{t('create_first_budget')}</p>
               <div className="mt-4">
-                <AddBudgetDialog />
+                {addBudgetButton}
               </div>
           </div>
         )}

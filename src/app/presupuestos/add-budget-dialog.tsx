@@ -27,12 +27,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusCircle } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { PlusCircle, Pencil } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/auth';
+import type { Budget } from '@/lib/types';
 
 const budgetFormSchema = z.object({
   category: z.string().min(1, { message: 'La categoría es requerida.' }),
@@ -50,10 +51,17 @@ const expenseCategories = [
   "Compras", "Comida", "Transporte", "Vivienda", "Ocio", "Salud", "Otros", "Restaurantes"
 ];
 
-export function AddBudgetDialog() {
+interface AddBudgetDialogProps {
+  budgetToEdit?: Budget;
+  children: React.ReactNode;
+}
+
+
+export function AddBudgetDialog({ budgetToEdit, children }: AddBudgetDialogProps) {
   const [open, setOpen] = useState(false);
   const { t } = useI18n();
   const { user } = useAuth();
+  const isEditing = !!budgetToEdit;
 
   const form = useForm<BudgetFormValues>({
     resolver: zodResolver(budgetFormSchema),
@@ -62,6 +70,20 @@ export function AddBudgetDialog() {
       limit: undefined,
     },
   });
+
+  useEffect(() => {
+    if (isEditing && budgetToEdit) {
+      form.reset({
+        category: budgetToEdit.category,
+        limit: budgetToEdit.limit,
+      });
+    } else {
+      form.reset({
+        category: '',
+        limit: undefined,
+      });
+    }
+  }, [isEditing, budgetToEdit, form]);
 
   const budgetsKey = useMemo(() => (user ? `budgets_${user.email}` : null), [user]);
 
@@ -94,10 +116,12 @@ export function AddBudgetDialog() {
       console.log('Budget saved successfully!');
       setOpen(false);
       window.dispatchEvent(new StorageEvent('storage', { key: budgetsKey }));
-      form.reset({
-        category: '',
-        limit: undefined
-      });
+      if (!isEditing) {
+        form.reset({
+          category: '',
+          limit: undefined
+        });
+      }
     } catch (error) {
       console.error('Error saving budget: ', error);
     }
@@ -106,18 +130,13 @@ export function AddBudgetDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="gap-1">
-          <PlusCircle className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            {t('add_budget')}
-          </span>
-        </Button>
+        {children}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('add_budget')}</DialogTitle>
+          <DialogTitle>{isEditing ? t('edit_budget') : t('add_budget')}</DialogTitle>
           <DialogDescription>
-            {t('create_new_budget')}
+            {isEditing ? t('update_budget_details') : t('create_new_budget')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -131,6 +150,7 @@ export function AddBudgetDialog() {
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
+                    disabled={isEditing}
                   >
                     <FormControl>
                       <SelectTrigger>

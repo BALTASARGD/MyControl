@@ -11,6 +11,9 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
+import { Button } from '@/components/ui/button';
+import { Pencil } from 'lucide-react';
+import { AddBudgetDialog } from './add-budget-dialog';
 
 export function BudgetCard({ budget }: { budget: Budget }) {
   const { t } = useI18n();
@@ -27,11 +30,18 @@ export function BudgetCard({ budget }: { budget: Budget }) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{budget.category}</CardTitle>
-        <CardDescription>
-          {formattedSpent} {t('of')} {formattedLimit}
-        </CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between">
+        <div>
+          <CardTitle>{budget.category}</CardTitle>
+          <CardDescription>
+            {formattedSpent} {t('of')} {formattedLimit}
+          </CardDescription>
+        </div>
+        <AddBudgetDialog budgetToEdit={budget}>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Pencil className="h-4 w-4" />
+          </Button>
+        </AddBudgetDialog>
       </CardHeader>
       <CardContent>
         <Progress value={Math.min(percentage, 100)} className="h-2" />
