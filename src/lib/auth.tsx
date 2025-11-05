@@ -46,13 +46,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = (name: string, email: string) => {
-    const defaultAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
-    const userData = { name, email, avatarUrl: defaultAvatar?.imageUrl || '' };
     const userKey = `user_${email}`;
+    const existingUser = localStorage.getItem(userKey);
+
+    if (existingUser) {
+      // Si el usuario ya existe, simplemente lo cargamos
+      setUser(JSON.parse(existingUser));
+    } else {
+      // Si es un usuario nuevo, creamos su perfil con un avatar por defecto
+      const defaultAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
+      const userData = { name, email, avatarUrl: defaultAvatar?.imageUrl || '' };
+      localStorage.setItem(userKey, JSON.stringify(userData));
+      setUser(userData);
+    }
     
-    localStorage.setItem(userKey, JSON.stringify(userData));
     localStorage.setItem(LAST_LOGGED_IN_USER_KEY, email);
-    setUser(userData);
   };
 
   const logout = () => {
