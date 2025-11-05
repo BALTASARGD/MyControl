@@ -10,7 +10,6 @@ import StatsCard from '@/components/dashboard/stats-card';
 import { DollarSign, Wallet, PiggyBank } from 'lucide-react';
 import SpendingChart from '@/components/dashboard/spending-chart';
 import RecentTransactions from '@/components/dashboard/recent-transactions';
-import BudgetAlerts from '@/components/dashboard/budget-alerts';
 import { useI18n } from '@/lib/i18n';
 
 export default function DashboardPage() {
@@ -65,7 +64,6 @@ export default function DashboardPage() {
             </div>
             <div className="space-y-4">
               <RecentTransactions />
-              <BudgetAlerts />
             </div>
           </div>
         </main>
