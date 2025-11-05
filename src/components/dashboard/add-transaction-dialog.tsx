@@ -41,7 +41,7 @@ const transactionFormSchema = z.object({
   }),
   amount: z.coerce.number().positive({ message: 'El monto debe ser positivo.' }),
   description: z.string().min(1, { message: 'La descripción es requerida.' }),
-  category: z.string({ required_error: 'La categoría es requerida.' }),
+  category: z.string().min(1, { required_error: 'La categoría es requerida.' }),
   date: z.string({ required_error: 'La fecha es requerida.' }),
 });
 
@@ -63,6 +63,8 @@ export function AddTransactionDialog() {
     },
   });
 
+  const transactionType = form.watch('type');
+
   async function onSubmit(data: TransactionFormValues) {
     try {
       const existingTransactions: Transaction[] = JSON.parse(
@@ -83,7 +85,13 @@ export function AddTransactionDialog() {
       // Disparar un evento para que otras partes de la app sepan que se actualizaron las transacciones
       window.dispatchEvent(new Event('storage'));
       router.refresh();
-      form.reset();
+      form.reset({
+        type: 'expense',
+        amount: undefined,
+        description: '',
+        category: '',
+        date: new Date().toISOString().split('T')[0],
+      });
     } catch (error) {
       console.error('Error saving transaction: ', error);
     }
@@ -166,7 +174,7 @@ export function AddTransactionDialog() {
                   <FormLabel>{t('category')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -174,13 +182,23 @@ export function AddTransactionDialog() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="compras">Compras</SelectItem>
-                      <SelectItem value="comida">Comida</SelectItem>
-                      <SelectItem value="transporte">Transporte</SelectItem>
-                      <SelectItem value="vivienda">Vivienda</SelectItem>
-                      <SelectItem value="ocio">Ocio</SelectItem>
-                      <SelectItem value="salud">Salud</SelectItem>
-                      <SelectItem value="otros">Otros</SelectItem>
+                      {transactionType === 'income' ? (
+                        <>
+                          <SelectItem value="Salario">Salario</SelectItem>
+                          <SelectItem value="Ventas">Ventas</SelectItem>
+                          <SelectItem value="Otros Ingresos">Otros Ingresos</SelectItem>
+                        </>
+                      ) : (
+                        <>
+                          <SelectItem value="Compras">Compras</SelectItem>
+                          <SelectItem value="Comida">Comida</SelectItem>
+                          <SelectItem value="Transporte">Transporte</SelectItem>
+                          <SelectItem value="Vivienda">Vivienda</SelectItem>
+                          <SelectItem value="Ocio">Ocio</SelectItem>
+                          <SelectItem value="Salud">Salud</SelectItem>
+                          <SelectItem value="Otros">Otros</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
